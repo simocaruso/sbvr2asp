@@ -1,0 +1,13 @@
+%import common.WORD
+%import common.NEWLINE
+
+start: ((definition | property) NEWLINE)+
+definition: name
+!property.1: name " has " name
+          | name " includes " name
+          | name " establishes " name
+
+?name: WORD
+      | name " " name -> spaced_name
+      | name "-" name -> dashed_name
+      | name "/" name -> slashed_name

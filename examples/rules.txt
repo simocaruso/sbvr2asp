@@ -1,0 +1,7 @@
+It is necessary that each rental has exactly one requested car group.
+// :- rental(X), #count{requested_car_group(Y): has(rental(X), requested_car_group(Y))} != 1.
+It is necessary that each rental includes exactly one rental period.
+It is necessary that each rental has exactly one return branch.
+//It is necessary that the scheduled pick-up date/time of each advance rental is after the booking date/time of the rental booking that establishes the advance rental.
+// :- scheduled(X,T), has(advance_rental(Y), scheduled(X)), advance_rental(Y)
+//    T > T2, booking(P,T2), rental_bookoing(Z), has(booking(P),

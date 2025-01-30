@@ -1,0 +1,40 @@
+%import common.CNAME
+%import common.NEWLINE
+%import common.INT
+%import common.CPP_COMMENT
+
+COMMENT: CPP_COMMENT NEWLINE
+%ignore COMMENT
+
+// ----
+
+start: proposition+
+
+
+proposition: proposition_expression "." NEWLINE
+modal_operator: "It is obligatory that " -> obligation_formulation
+               | "It is prohibited that " -> obligation_formulation_embedding_logical_negation
+               | "It is necessary that "  -> necessity_formulation
+               | "It is impossible that " -> necessity_formulation_embedding_logical_negation
+               | "It is possible that "   -> possibility_formulation
+               | "It is permitted that "  -> permissibility_formulation
+
+quantification: "each "                                 -> universal_quantification
+              | "some " | "at least one "               -> existential_quantification
+              | "at least " INT " "                     -> at_least_n_quantification
+              | "at most one "                          -> at_most_one_quantification
+              | "at most " INT " "                      -> at_most_n_quantification
+              | "exactly one "                          -> exactly_one_quantification
+              | "exactly " INT " "                      -> exactly_n_quantification
+              | "at least " INT " and at most " INT " " -> numeric_range_quantification
+              | "more than one "                        -> at_least_n_quantification_with_n_2
+              | "no "                                   -> logical_negation
+
+proposition_expression: modal_operator proposition_expression  -> modal_proposition
+                      | concept verb concept                   -> simple_proposition
+                      | concept "is after" concept             -> ordered_proposition
+concept: quantification CNAME " "?
+
+!verb: "has "
+    | "includes "
+    | "establishes "
