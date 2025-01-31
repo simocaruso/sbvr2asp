@@ -16,29 +16,17 @@ def replace_concept_name(register: dict, text: str) -> str:
     return text
 
 
-def main():
-    arg_parser = ArgumentParser()
-    arg_parser.add_argument("vocabulary", help="Vocabulary file")
-    arg_parser.add_argument("rules", help="Rules file")
-    args = arg_parser.parse_args()
-
-    register = Register()
-
-    # Process vocabulary
-    with open(args.vocabulary, "r") as vocabulary_file:
-        vocabulary = vocabulary_file.read()
+def process_vocabulary(vocabulary: str, register: Register):
     lark = LarkWrapper(Grammar.VOCABULARY)
     tree = lark.parse(vocabulary)
     VocabularyTransformer(register).transform(tree)
 
-    # Process rules
-    with open(args.rules, "r") as rules_file:
-        rules = rules_file.read()
-    rules = replace_concept_name(register.get_register(), rules)
 
+def process_rules(rules: str, register: Register) -> list[Node]:
+    rules = replace_concept_name(register.get_register(), rules)
     lark = LarkWrapper(Grammar.RULES)
     tree = lark.parse(rules)
-    propositions: list[Node] = RulesTransformer().transform(tree)
+    propositions = RulesTransformer().transform(tree)
 
     reshaped_tree = []
     for proposition in propositions:
@@ -51,4 +39,19 @@ def main():
         for node in tree:
             node.evaluate(curr.body, register, visited_nodes, False)
         res.append(curr)
+    return res
+
+def main():
+    arg_parser = ArgumentParser()
+    arg_parser.add_argument("vocabulary", help="Vocabulary file")
+    arg_parser.add_argument("rules", help="Rules file")
+    args = arg_parser.parse_args()
+
+    register = Register()
+    with open(args.vocabulary, 'r') as vocabulary:
+        process_vocabulary(vocabulary.read(), register)
+
+    with open(args.rules, 'r') as rules:
+        res = process_rules(rules.read(), register)
+
     print("\n".join(map(str, res)))

@@ -16,5 +16,6 @@ class TestVocabulary(unittest.TestCase):
         VocabularyTransformer(register).transform(tree)
         self.assertTrue(register.get_concept_id('car movement'))
         self.assertTrue(register.get_concept_id('receiving branch'))
-        self.assertEqual(str(register.get_relation('car_movement', 'receiving_branch')), 'has(_,_)', )
+        self.assertEqual(str(register.get_relation(register.get_concept_id('car movement'),
+                                                   register.get_concept_id('receiving branch'))), 'has(_,_)', )
         self.assertEqual(str(register.get_atom(register.get_concept_id('car movement'))), 'car_movement(_)')
