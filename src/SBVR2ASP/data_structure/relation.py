@@ -9,9 +9,11 @@ class Relation(Node):
         self.relation_name = relation
 
     def reshape(self, tree: list[Node]):
-        tree.append(Relation(self.get_left_most(self.left),
-                             self.get_left_most(self.right),
-                             self.relation_name))
+        res = Relation(self.get_left_most(self.left),
+                       self.get_left_most(self.right),
+                       self.relation_name)
+        res.negated = self.negated
+        tree.append(res)
         tree = self.left.reshape(tree)
         tree = self.right.reshape(tree)
         return tree
@@ -33,9 +35,11 @@ class ThatRelation(Relation):
         super().__init__(left, right, relation)
 
     def reshape(self, tree: list[Node]):
-        tree.append(Relation(self.get_right_most(self.left),
-                             self.get_left_most(self.right),
-                             self.relation_name))
+        res = Relation(self.get_right_most(self.left),
+                       self.get_left_most(self.right),
+                       self.relation_name)
+        res.negated = self.negated
+        tree.append(res)
         tree = self.left.reshape(tree)
         tree = self.right.reshape(tree)
         return tree
@@ -49,8 +53,10 @@ class SpecificationComplementRelation(Node):
         super().__init__(left, right)
 
     def reshape(self, tree: list[Node]):
-        tree.append(SpecificationComplementRelation(self.get_right_most(self.left),
-                                                    self.get_left_most(self.right)))
+        res = SpecificationComplementRelation(self.get_right_most(self.left),
+                                              self.get_left_most(self.right))
+        res.negated = self.negated
+        tree.append(res)
         tree = self.left.reshape(tree)
         tree = self.right.reshape(tree)
         return tree
@@ -72,8 +78,10 @@ class OrderedRelation(Node):
         super().__init__(left, right)
 
     def reshape(self, tree: list[Node]):
-        tree.append(OrderedRelation(self.get_left_most(self.left),
-                                    self.get_left_most(self.right)))
+        res = OrderedRelation(self.get_left_most(self.left),
+                              self.get_left_most(self.right))
+        res.negated = self.negated
+        tree.append(res)
         tree = self.left.reshape(tree)
         tree = self.right.reshape(tree)
         return tree
@@ -81,10 +89,12 @@ class OrderedRelation(Node):
     def evaluate(self, context: list, register: Register, visited: set, negated=False):
         if self.id not in visited:
             visited.add(self.id)
-        left, new_context = self.left.evaluate(context, register, visited, self.negated)
-        right, new_context = self.right.evaluate(context, register, visited, self.negated)
+        left, new_context = self.left.evaluate(context, register, visited)
+        right, new_context = self.right.evaluate(context, register, visited)
         register.init(left)
         register.init(right)
         res = Math(MathOperator.GREATER_THAN, left.terms['id'], right.terms['id'])
+        if self.negated:
+            res.negate()
         new_context.append(res)
         return Math(MathOperator.GREATER_THAN, left, right)
