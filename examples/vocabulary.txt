@@ -12,4 +12,10 @@ rental booking establishes advance rental
 rental includes rental period
 rental has requested car group
 rental has return branch
-rental has scheduled pick-up date
+rental has scheduled pick-up date/time
+
+
+advance rental includes rental period
+advance rental has requested car group
+advance rental has return branch
+advance rental has scheduled pick-up date/time

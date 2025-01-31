@@ -1,32 +1,90 @@
-from SBVR2ASP.asp.atom import Atom
-from SBVR2ASP.asp.term import ASP_NULL, Term
-from SBVR2ASP.data_structure.concept import Concept
+from SBVR2ASP.asp.math import MathOperator, Math
+from SBVR2ASP.data_structure.node import Node
 from SBVR2ASP.register import Register
 
 
-class Relation:
-
-    def __init__(self, relation, first, second):
+class Relation(Node):
+    def __init__(self, left, right, relation):
+        super().__init__(left, right)
         self.relation_name = relation
-        self.first: Concept = first
-        self.second: Concept = second
 
-    def link_atoms(self, relation: Atom, atom: Atom):
-        if atom.terms['id'] == ASP_NULL:
-            atom.terms['id'] = Term(atom.predicate[0:3].upper())
-        relation.terms[atom.predicate] = atom
+    def reshape(self, tree: list[Node]):
+        tree.append(Relation(self.get_left_most(self.left),
+                             self.get_left_most(self.right),
+                             self.relation_name))
+        tree = self.left.reshape(tree)
+        tree = self.right.reshape(tree)
+        return tree
 
-    def to_asp(self, register: Register) -> list:
-        res = [self.first.to_asp(register), self.second.to_asp(register)]
-        relation_terms = {register.get_concept_name(self.first.concept_id): Term(ASP_NULL),
-                          register.get_concept_name(self.second.concept_id): Term(ASP_NULL),
-                          }
-        relation = Atom(self.relation_name, relation_terms)
-        self.link_atoms(relation, res[0])
-        if self.second.cardinality is not None:
-            res[1].aggregate_set_body.append(relation)
-            self.link_atoms(relation, res[1].aggregate_set_head[0])
-        else:
-            self.link_atoms(relation, res[1])
-        return res
+    def evaluate(self, context: list, register: Register, visited: set, negated=False):
+        if self.id not in visited:
+            visited.add(self.id)
+        left, relation_context = self.left.evaluate(context, register, visited, self.negated)
+        right, relation_context = self.right.evaluate(context, register, visited, self.negated)
+        relation_atom = register.get_relation(self.left.concept_id, self.right.concept_id)
+        register.link_atoms(relation_atom, left)
+        register.link_atoms(relation_atom, right)
+        if relation_atom:
+            relation_context.append(relation_atom)
 
+
+class ThatRelation(Relation):
+    def __init__(self, left, right, relation):
+        super().__init__(left, right, relation)
+
+    def reshape(self, tree: list[Node]):
+        tree.append(Relation(self.get_right_most(self.left),
+                             self.get_left_most(self.right),
+                             self.relation_name))
+        tree = self.left.reshape(tree)
+        tree = self.right.reshape(tree)
+        return tree
+
+    def evaluate(self, context: list, register: Register, visited: set, negated=False):
+        super().evaluate(context, register, visited)
+
+
+class SpecificationComplementRelation(Node):
+    def __init__(self, left, right):
+        super().__init__(left, right)
+
+    def reshape(self, tree: list[Node]):
+        tree.append(SpecificationComplementRelation(self.get_right_most(self.left),
+                                                    self.get_left_most(self.right)))
+        tree = self.left.reshape(tree)
+        tree = self.right.reshape(tree)
+        return tree
+
+    def evaluate(self, context: list, register: Register, visited: set, negated=False):
+        if self.id not in visited:
+            visited.add(self.id)
+        left, new_context = self.left.evaluate(context, register, visited, self.negated)
+        right, new_context = self.right.evaluate(context, register, visited, self.negated)
+        relation_atom = register.get_relation(self.right.concept_id, self.left.concept_id)
+        register.link_atoms(relation_atom, left)
+        register.link_atoms(relation_atom, right)
+        if relation_atom:
+            new_context.append(relation_atom)
+
+
+class OrderedRelation(Node):
+    def __init__(self, left, right):
+        super().__init__(left, right)
+
+    def reshape(self, tree: list[Node]):
+        tree.append(OrderedRelation(self.get_left_most(self.left),
+                                    self.get_left_most(self.right)))
+        tree = self.left.reshape(tree)
+        tree = self.right.reshape(tree)
+        return tree
+
+    def evaluate(self, context: list, register: Register, visited: set, negated=False):
+        if self.id not in visited:
+            visited.add(self.id)
+        left, new_context = self.left.evaluate(context, register, visited, self.negated)
+        right, new_context = self.right.evaluate(context, register, visited, self.negated)
+        register.init(left)
+        register.init(right)
+        res = Math(MathOperator.GREATER_THAN, left.terms['id'], right.terms['id'])
+        new_context.append(res)
+        return Math(MathOperator.GREATER_THAN, left, right)

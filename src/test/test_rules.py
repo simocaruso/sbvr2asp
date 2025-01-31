@@ -24,7 +24,7 @@ class TestRules(unittest.TestCase):
         rules = replace_concept_name(register.get_register(), rules)
         lark = LarkWrapper(Grammar.RULES)
         tree = lark.parse(rules)
-        res: list[Proposition] = RulesTransformer().transform(tree)
+        res: list[Proposition] = RulesTransformer(register).transform(tree)
         rental_id = register.get_concept_id('rental')
         car_group_id = register.get_concept_id('requested car group')
         self.assertIn(Concept(rental_id, None),

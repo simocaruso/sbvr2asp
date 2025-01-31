@@ -24,8 +24,10 @@ class Register:
         """
         return self._name_to_id
 
+    def _clear_name(self, name: str) -> str:
+        return name.replace(' ', '_').replace('/', '_').replace('-', '_')
+
     def get_concept_id(self, concept_name: str) -> str | None:
-        concept_name = concept_name.replace('_', ' ')
         if concept_name not in self._name_to_id:
             return None
         return self._name_to_id[concept_name]
@@ -33,13 +35,13 @@ class Register:
     def get_concept_name(self, concept_id: str) -> str | None:
         if concept_id not in self._id_to_name:
             return None
-        return self._id_to_name[concept_id].replace(' ', '_')
+        return self._clear_name(self._id_to_name[concept_id])
 
-    def get_relation(self, first_name: str, second_name: str) -> Atom | None:
-        if not self.get_concept_id(first_name) or not self.get_concept_id(second_name):
+    def get_relation(self, first_id: str, second_id: str) -> Atom | None:
+        if not (first_id, second_id) in self._properties:
             return None
-        return self._create_atom(self._properties[(self.get_concept_id(first_name), self.get_concept_id(second_name))],
-                                 [first_name, second_name])
+        return self._create_atom(self._properties[first_id, second_id],
+                                 [self._id_to_name[first_id], self._id_to_name[second_id]])
 
     def add_concept(self, concept_name: str):
         if concept_name not in self._name_to_id:
@@ -62,5 +64,13 @@ class Register:
     def _create_atom(self, predicate: str, term_names: list[str]) -> Atom:
         terms = {}
         for name in term_names:
-            terms[name] = Term(ASP_NULL)
-        return Atom(predicate.replace(' ', '_'), terms)
+            terms[self._clear_name(name)] = Term(ASP_NULL)
+        return Atom(self._clear_name(predicate), terms)
+
+    def link_atoms(self, relation: Atom, atom: Atom):
+        self.init(atom)
+        relation.terms[atom.predicate] = atom
+
+    def init(self, atom: Atom):
+        if atom.terms['id'] == ASP_NULL:
+            atom.terms['id'] = Term(''.join([x[0:3] for x in atom.predicate.split('_')]).upper())

@@ -25,6 +25,12 @@ class Aggregate(Literal):
         self.aggregate_set_body = aggregate_set_body
         self.guard: tuple[Math, Math] = guard  # tuple lb, ub
 
+    def negate(self):
+        if self.guard[0]:
+            self.guard[0].negate()
+        if self.guard[1]:
+            self.guard[1].negate()
+
     def __str__(self):
         res = (f'#{self.aggregate_operator.value}'
                f'{{{", ".join(map(str, self.aggregate_set_head))}: {", ".join(map(str, self.aggregate_set_body))}}}')
