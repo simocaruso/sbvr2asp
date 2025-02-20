@@ -3,10 +3,11 @@ from typing import Any
 import lark
 from lark import Transformer, v_args
 
+from SBVR2ASP.asp.math import MathOperator
 from SBVR2ASP.data_structure.cardinality import ExactCardinality
 from SBVR2ASP.data_structure.concept import Concept
 from SBVR2ASP.data_structure.node import Node
-from SBVR2ASP.data_structure.relation import Relation, OrderedRelation, SpecificationComplementRelation
+from SBVR2ASP.data_structure.relation import Relation, MathRelation, SpecificationComplementRelation
 
 NEGATIVE = True
 POSITIVE = False
@@ -29,6 +30,9 @@ class RulesTransformer(Transformer):
     def necessity_formulation(self):
         return POSITIVE
 
+    def obligation_formulation(self):
+        return NEGATIVE
+
     def universal_quantification(self):
         return None
 
@@ -44,7 +48,10 @@ class RulesTransformer(Transformer):
         return Relation(subj, obj, verb)
 
     def after_proposition(self, first, second):
-        return OrderedRelation(first, second)
+        return MathRelation(first, second, MathOperator.GREATER_THAN)
+
+    def match_proposition(self, first, second):
+        return MathRelation(first, second, MathOperator.EQUAL)
 
     def concept_proposition(self, concept):
         return concept

@@ -14,8 +14,18 @@ rental has requested car group
 rental has return branch
 rental has scheduled pick-up date/time
 
-
 advance rental includes rental period
 advance rental has requested car group
 advance rental has return branch
 advance rental has scheduled pick-up date/time
+
+
+
+international inward rental
+country
+country of registration
+rented car
+return branch has country
+international inward rental has return branch
+rental has rented car
+rented car has country of registration

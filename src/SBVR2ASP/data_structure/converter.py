@@ -12,7 +12,7 @@ from SBVR2ASP.register import Register
 
 if TYPE_CHECKING:
     from SBVR2ASP.data_structure.concept import Concept
-    from SBVR2ASP.data_structure.relation import Relation, OrderedRelation
+    from SBVR2ASP.data_structure.relation import Relation, MathRelation
     from SBVR2ASP.data_structure.proposition import Proposition
 
 
@@ -65,7 +65,7 @@ class Converter:
     def convert_concept(self, c: Concept) -> Atom:
         return Atom(self._register.get_concept_name(c.concept_id))
 
-    def convert_ordered_relation(self, r: OrderedRelation) -> Atom:
+    def convert_ordered_relation(self, r: MathRelation) -> Atom:
         first = r.left.convert(self)
         second = r.right.convert(self)
         self._current_rule.body.append(

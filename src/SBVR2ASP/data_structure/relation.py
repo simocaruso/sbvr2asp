@@ -21,7 +21,7 @@ class Relation(Node):
     def evaluate(self, context: list, register: Register, visited: set, negated=False):
         if self.id not in visited:
             visited.add(self.id)
-        left, relation_context = self.left.evaluate(context, register, visited, self.negated)
+        left, relation_context = self.left.evaluate(context, register, visited)
         right, relation_context = self.right.evaluate(context, register, visited, self.negated)
         relation_atom = register.get_relation(self.left.concept_id, self.right.concept_id)
         register.link_atoms(relation_atom, left)
@@ -67,19 +67,25 @@ class SpecificationComplementRelation(Node):
         left, new_context = self.left.evaluate(context, register, visited, self.negated)
         right, new_context = self.right.evaluate(context, register, visited, self.negated)
         relation_atom = register.get_relation(self.right.concept_id, self.left.concept_id)
+        if not relation_atom:
+            raise RuntimeError(
+                f'No relation between {register.get_concept_name(self.right.concept_id)} and'
+                f' {register.get_concept_name(self.left.concept_id)}')
         register.link_atoms(relation_atom, left)
         register.link_atoms(relation_atom, right)
         if relation_atom:
             new_context.append(relation_atom)
 
 
-class OrderedRelation(Node):
-    def __init__(self, left, right):
+class MathRelation(Node):
+    def __init__(self, left, right, operator: MathOperator):
         super().__init__(left, right)
+        self.operator = operator
 
     def reshape(self, tree: list[Node]):
-        res = OrderedRelation(self.get_left_most(self.left),
-                              self.get_left_most(self.right))
+        res = MathRelation(self.get_left_most(self.left),
+                           self.get_left_most(self.right),
+                           self.operator)
         res.negated = self.negated
         tree.append(res)
         tree = self.left.reshape(tree)
@@ -93,8 +99,8 @@ class OrderedRelation(Node):
         right, new_context = self.right.evaluate(context, register, visited)
         register.init(left)
         register.init(right)
-        res = Math(MathOperator.GREATER_THAN, left.terms['id'], right.terms['id'])
+        res = Math(self.operator, left.terms['id'], right.terms['id'])
         if self.negated:
             res.negate()
         new_context.append(res)
-        return Math(MathOperator.GREATER_THAN, left, right)
+        return Math(self.operator, left, right)
