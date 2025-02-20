@@ -9,7 +9,8 @@ class Register:
     def __init__(self):
         self._name_to_id = {}  # concept name, mapped id
         self._id_to_name = {}
-        self._properties = {}
+        self._properties = {}  # tuple of entities
+        self._subclasses = defaultdict(list)  # list of subclasses of a concept
 
     def _generate_id(self) -> str:
         res = uuid.uuid4().hex
@@ -74,3 +75,9 @@ class Register:
     def init(self, atom: Atom):
         if atom.terms['id'] == ASP_NULL:
             atom.terms['id'] = Term(''.join([x[0:3] for x in atom.predicate.split('_')]).upper())
+
+    def add_subclass(self, concept: str, superclass: str):
+        self._subclasses[superclass].append(concept)
+
+    def get_subclasses(self, concept: str) -> list[str]:
+        return self._subclasses[concept]

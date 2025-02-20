@@ -10,7 +10,9 @@ from SBVR2ASP.transformers.vocabulary import VocabularyTransformer
 class TestVocabulary(unittest.TestCase):
     def test_vocabulary(self):
         text = ('car movement\n'
-                'car movement has receiving branch')
+                'car movement has receiving branch\n'
+                'one-way car movement\n'
+                'Definition: car movement\n')
         tree = LarkWrapper(Grammar.VOCABULARY).parse(text)
         register = Register()
         VocabularyTransformer(register).transform(tree)
@@ -19,3 +21,4 @@ class TestVocabulary(unittest.TestCase):
         self.assertEqual(str(register.get_relation(register.get_concept_id('car movement'),
                                                    register.get_concept_id('receiving branch'))), 'has(_,_)', )
         self.assertEqual(str(register.get_atom(register.get_concept_id('car movement'))), 'car_movement(_)')
+        self.assertTrue('one-way car movement' in register.get_subclasses('car movement'))

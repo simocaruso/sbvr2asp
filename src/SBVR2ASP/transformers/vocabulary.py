@@ -12,11 +12,15 @@ class VocabularyTransformer(Transformer):
     def start(self, *token):
         pass
 
-    def definition(self, concept):
+    def concept(self, concept, superclass):
         self.register.add_concept(concept)
+        self.register.add_subclass(concept, superclass)
 
     def property(self, first, property_name, second):
         self.register.set_property(first, second, property_name.strip())
+
+    def definition(self, name):
+        return name
 
     def spaced_name(self, first, second):
         return f"{first} {second}"

@@ -19,9 +19,21 @@ advance rental has requested car group
 advance rental has return branch
 advance rental has scheduled pick-up date/time
 
+car movement being round-trip
+Definition: car movement
 
+one-way car movement
+Definition: car movement
+
+one-way rental
+Definition: rental
+
+international rental
+Definition: one-way rental
 
 international inward rental
+Definition: international rental
+
 country
 country of registration
 rented car
