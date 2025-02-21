@@ -77,7 +77,26 @@ class Register:
             atom.terms['id'] = Term(''.join([x[0:3] for x in atom.predicate.split('_')]).upper())
 
     def add_subclass(self, concept: str, superclass: str):
-        self._subclasses[superclass].append(concept)
+        self._subclasses[self.get_concept_id(superclass)].append(self.get_concept_id(concept))
 
     def get_subclasses(self, concept: str) -> list[str]:
         return self._subclasses[concept]
+
+    def process_subclasses(self):
+        # Set all subclasses
+        for id in self._id_to_name:
+            curr = []
+            queue = self._subclasses[id]
+            while queue:
+                curr.append(queue[0])
+                queue.extend(self._subclasses[queue[0]])
+                queue.pop(0)
+            self._subclasses[id] = curr
+
+        new_entries = {}
+        for concepts, property_name in self._properties.items():
+            for subclass in self._subclasses[concepts[0]]:
+                new_entries[(subclass, concepts[1])] = property_name
+            for subclass in self._subclasses[concepts[1]]:
+                new_entries[(concepts[0], subclass)] = property_name
+        self._properties.update(new_entries)

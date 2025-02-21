@@ -10,11 +10,12 @@ class VocabularyTransformer(Transformer):
         self.register = register
 
     def start(self, *token):
-        pass
+        self.register.process_subclasses()
 
     def concept(self, concept, superclass):
         self.register.add_concept(concept)
-        self.register.add_subclass(concept, superclass)
+        if superclass:
+            self.register.add_subclass(concept, superclass)
 
     def property(self, first, property_name, second):
         self.register.set_property(first, second, property_name.strip())

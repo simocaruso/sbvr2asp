@@ -1,11 +1,12 @@
 rental
 requested car group
 rental period
-return branch
 scheduled pick-up date/time
 advance rental
 booking date/time
 rental booking
+actual return date/time
+branch
 
 rental booking has booking date/time
 rental booking establishes advance rental
@@ -18,6 +19,15 @@ advance rental includes rental period
 advance rental has requested car group
 advance rental has return branch
 advance rental has scheduled pick-up date/time
+
+local area
+rental car
+
+return branch
+Definition: branch
+
+in-country rental
+Definition: rental
 
 car movement being round-trip
 Definition: car movement
@@ -34,6 +44,9 @@ Definition: one-way rental
 international inward rental
 Definition: international rental
 
+rented car
+Definition: rental car
+
 country
 country of registration
 rented car
@@ -41,3 +54,7 @@ return branch has country
 international inward rental has return branch
 rental has rented car
 rented car has country of registration
+rental has actual return date/time
+local area owns rental car
+local area includes branch
+branch is included in local area

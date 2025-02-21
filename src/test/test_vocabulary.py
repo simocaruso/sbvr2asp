@@ -21,4 +21,4 @@ class TestVocabulary(unittest.TestCase):
         self.assertEqual(str(register.get_relation(register.get_concept_id('car movement'),
                                                    register.get_concept_id('receiving branch'))), 'has(_,_)', )
         self.assertEqual(str(register.get_atom(register.get_concept_id('car movement'))), 'car_movement(_)')
-        self.assertTrue('one-way car movement' in register.get_subclasses('car movement'))
+        self.assertTrue(register.get_concept_id('one-way car movement') in register.get_subclasses(register.get_concept_id('car movement')))

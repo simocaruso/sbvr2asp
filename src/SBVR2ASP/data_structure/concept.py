@@ -1,5 +1,6 @@
 from SBVR2ASP.asp.aggregate import AggregateOperator, Aggregate
 from SBVR2ASP.data_structure.node import Node
+from SBVR2ASP.debug import Debug
 from SBVR2ASP.register import Register
 
 
@@ -10,7 +11,7 @@ class Concept(Node):
         self.cardinality = cardinality
         self.evaluate_res = None
 
-    def reshape(self, tree: list[Node]):
+    def reshape(self, tree: list[Node], queue):
         return tree
 
     def evaluate(self, context: list, register: Register, visited: set, negated=False):
@@ -36,3 +37,6 @@ class Concept(Node):
         if not isinstance(other, Concept):
             return False
         return self.concept_id == other.concept_id and self.cardinality == other.cardinality
+
+    def __repr__(self):
+        return Debug.register.get_concept_name(self.concept_id)

@@ -6,6 +6,8 @@ concept: name [_NEWLINE definition]
 !property.1: name " has " name
           | name " includes " name
           | name " establishes " name
+          | name " owns " name
+          | name " is included in " name
 
 definition: "Definition: " name
 ?name: WORD

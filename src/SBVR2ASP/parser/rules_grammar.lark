@@ -31,15 +31,17 @@ quantification: "each "                                 -> universal_quantificat
               | "no "                                   -> logical_negation
 
 proposition_expression: modal_operator proposition_expression                     -> modal_proposition
+                      | "at " proposition_expression proposition_expression       -> at_proposition
                       | proposition_expression verb proposition_expression        -> simple_proposition
                       | proposition_expression "is after " proposition_expression -> after_proposition
                       | proposition_expression "is " proposition_expression       -> match_proposition
                       | concept                                                   -> concept_proposition
 
-concept: concept "of " "the "? concept          -> concept_of_each
-       | concept "that " verb concept           -> concept_that
+concept: concept "of " "the "? concept ["and " concept]  -> concept_of
+       | concept "that " verb concept                    -> concept_that
        | "the "? [quantification] CNAME " "?
 
 !verb: "has "
     | "includes "
     | "establishes "
+    | "owns "

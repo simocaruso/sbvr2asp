@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 
 from SBVR2ASP.asp.rule import Rule
 from SBVR2ASP.data_structure.relation import Node
+from SBVR2ASP.debug import Debug
 from SBVR2ASP.register import Register
 from SBVR2ASP.transformers.rules import RulesTransformer
 from SBVR2ASP.transformers.vocabulary import VocabularyTransformer
@@ -26,20 +27,23 @@ def process_rules(rules: str, register: Register) -> list[Node]:
     rules = replace_concept_name(register.get_register(), rules)
     lark = LarkWrapper(Grammar.RULES)
     tree = lark.parse(rules)
-    propositions = RulesTransformer().transform(tree)
+    propositions = RulesTransformer(register).transform(tree)
 
-    reshaped_tree = []
-    for proposition in propositions:
-        reshaped_tree.append(proposition.reshape([]))
+    trees = []  # Contains one tree for each proposition
+    queue = list(propositions)
+    while queue:
+        trees.append(queue[0].reshape([], queue))
+        queue.pop(0)
 
     res: list[Rule] = []
-    for tree in reshaped_tree:
+    for tree in trees:
         curr = Rule()
         visited_nodes = set()
         for node in tree:
             node.evaluate(curr.body, register, visited_nodes, False)
         res.append(curr)
     return res
+
 
 def main():
     arg_parser = ArgumentParser()
@@ -48,6 +52,7 @@ def main():
     args = arg_parser.parse_args()
 
     register = Register()
+    Debug.register = register
     with open(args.vocabulary, 'r') as vocabulary:
         process_vocabulary(vocabulary.read(), register)
 
