@@ -9,8 +9,14 @@ concept: name [_NEWLINE definition]
           | name " owns " name
           | name " is included in " name
           | name " is owned by " name
-          | name " is " name
+          | name " is base for " name
+          | name " is stored at " name
+          | name " is responsible for " name
+          | name " is provisionally charged to " name
+          | name " is calculated in " name
           | name " incurs " name
+          | name " is " name
+          | name " honors " name
 
 definition: "Definition: " name
 ?name: WORD

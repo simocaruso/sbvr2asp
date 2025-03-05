@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from textwrap import indent
 
 from SBVR2ASP.asp.rule import Rule
 from SBVR2ASP.data_structure.relation import Node
@@ -22,10 +23,35 @@ def process_vocabulary(vocabulary: str, register: Register):
     tree = lark.parse(vocabulary)
     VocabularyTransformer(register).transform(tree)
 
+def add_properties_to_grammar(lark: LarkWrapper, register: Register):
+    added = {'is'}  # "is" should not be included and is handled in the grammar
+    res = ''
+    for property in register.get_properties().values():
+        if property not in added:
+            added.add(property)
+            res += f'| \"{property} \"\n'
+    res = res.removeprefix('| ')
+    res = f'!verb: {indent(res, " " * len("!verb")).strip()}\n'
+    lark.extend_grammar(res)
 
 def process_rules(rules: str, register: Register) -> list[Node]:
     rules = replace_concept_name(register.get_register(), rules)
     lark = LarkWrapper(Grammar.RULES)
+    '''
+    !verb: "has "
+    | "includes "
+    | "establishes "
+    | "owns "
+    | "is owned by "
+    | "incurs "
+    | "is base for "
+    | "is stored at "
+    | "is provisionally charged to "
+    | "is responsible for "
+    | "is calculated in "
+    | "honors "
+    '''
+    add_properties_to_grammar(lark, register)
     tree = lark.parse(rules)
     propositions = RulesTransformer(register).transform(tree)
     trees = []  # Contains one tree for each proposition

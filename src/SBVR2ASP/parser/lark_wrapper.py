@@ -11,9 +11,11 @@ class Grammar(enum.Enum):
 class LarkWrapper(object):
     def __init__(self, grammar: Grammar):
         with open(os.path.join(os.path.dirname(__file__), grammar.value)) as f:
-            grammar = f.read()
-        self.lark: Lark = Lark(grammar)
+            self.grammar = f.read()
+
+    def extend_grammar(self, grammar: str):
+        self.grammar += f'\n{grammar}'
 
     def parse(self, text: str):
         text = text.strip() + '\n'
-        return self.lark.parse(text)
+        return Lark(self.grammar).parse(text)

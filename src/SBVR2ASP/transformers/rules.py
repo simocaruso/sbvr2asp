@@ -63,7 +63,11 @@ class RulesTransformer(Transformer):
             second.negated = True
         return MathRelation(first, second, MathOperator.EQUAL)
 
-    def condition_proposition(self, first, second):
+    def implication_proposition(self, first, second):
+        return Conjunction(first, second)
+
+    def conditional_proposition(self, first, second):
+        second.negated = True
         return Conjunction(first, second)
 
     def conjunction_proposition(self, first, second):

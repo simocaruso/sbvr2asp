@@ -1,9 +1,24 @@
+// Rental Rules
 It is necessary that each rental has exactly one requested car group.
 It is necessary that each rental includes exactly one rental period.
 It is necessary that each rental has exactly one return branch.
 It is necessary that the scheduled pick-up date/time of each advance rental is after the booking date/time of the rental booking that establishes the advance rental.
+
+// Charging / Billing / Payment Rules
+It is permitted that a rental is open only if an estimated rental charge is provisionally charged to a credit card of the renter that is responsible for the rental.
+It is necessary that the rental charge of each rental is calculated in the business currency of the rental.
+// If the renter of a rental requests a price conversion then it is obligatory that the rental charge of the rental is converted to the currency of the price conversion. -- "request" is not in vocabulary
+It is necessary that each cash rental honors the lowest rental price of the cash rental.
+
+// Driver rules
+
+
+// Pick-up / Return Rules
 It is obligatory that the country of the return branch of each international inward rental is the country of registration of the rented car of the rental.
 It is obligatory that at the actual return date/time of each in-country rental and each international inward rental the local area of the return branch of the rental owns the rented car of the rental.
 It is obligatory that the country of the return branch of each international inward rental is the country of registration of the rented car of the rental.
 It is necessary that if a rental is open and the rental is not an international inward rental then the rented car of the rental is owned by the local area of the pick-up branch of the rental.
 If the actual return date/time of a rental is after the end date/time of the grace period of the rental then it is obligatory that the rental incurs a late return charge.
+If the drop-off location of a rental is not the EU-Rent site that is base for the return branch of the rental then it is obligatory that the rental incurs a location penalty charge.
+// If a rental is assigned then it is obligatory that the rented car of the rental is stored at the pick-up branch of the rental. -- How to handle "assigned"?
+// At the actual start date/time of each rental it is obligatory that the fuel level of the rented car of the rental is full. -- Handle values of entity "fuel level"

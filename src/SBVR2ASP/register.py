@@ -1,3 +1,4 @@
+import copy
 import uuid
 from collections import defaultdict
 
@@ -24,6 +25,9 @@ class Register:
         :return: the name to id dictionary
         """
         return self._name_to_id
+
+    def get_properties(self):
+        return self._properties
 
     def _clear_name(self, name: str) -> str:
         return name.replace(' ', '_').replace('/', '_').replace('-', '_')

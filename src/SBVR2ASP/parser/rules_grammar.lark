@@ -31,24 +31,18 @@ quantification: "each "                                 -> universal_quantificat
               | "no "                                   -> logical_negation
 
 proposition_expression: modal_operator proposition_expression                          -> modal_proposition
-                      | "if "i proposition_expression "then " proposition_expression    -> condition_proposition
+                      | "if "i proposition_expression "then " proposition_expression   -> implication_proposition
                       | "at " proposition_expression proposition_expression            -> at_proposition
-                      | proposition_expression verb proposition_expression             -> simple_proposition
                       | proposition_expression "is after " proposition_expression      -> after_proposition
                       | concept                                                        -> concept_proposition
+                      | proposition_expression "only if " proposition_expression       -> conditional_proposition
                       | proposition_expression "and " proposition_expression           -> conjunction_proposition
+                      | proposition_expression verb proposition_expression             -> simple_proposition
                       | proposition_expression "is " [negation] proposition_expression -> match_proposition
 
 concept: concept "of " "the "? concept ["and " concept]  -> concept_of
        | concept "that " verb concept                    -> concept_that
        | _ARTICLE? [quantification] CNAME " "?
-
-!verb: "has "
-    | "includes "
-    | "establishes "
-    | "owns "
-    | "is owned by "
-    | "incurs "
 
 negation: "not "
 _ARTICLE: "a " | "an " | "the "

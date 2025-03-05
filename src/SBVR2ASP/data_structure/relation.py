@@ -26,6 +26,10 @@ class Relation(Node):
         left, relation_context = self.left.evaluate(context, register, visited)
         right, relation_context = self.right.evaluate(context, register, visited, self.negated)
         relation_atom = register.get_relation(self.left.concept_id, self.right.concept_id)
+        if not relation_atom:
+            raise RuntimeError(
+                f'No relation between {register.get_concept_name(self.left.concept_id)} and'
+                f' {register.get_concept_name(self.right.concept_id)}')
         register.link_atoms(relation_atom, left)
         register.link_atoms(relation_atom, right)
         if relation_atom:

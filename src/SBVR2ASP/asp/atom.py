@@ -17,4 +17,7 @@ class Atom(Literal):
 
     def __str__(self):
         negation = 'not ' if self.negation else ''
-        return f'{negation}{self.predicate}({",".join(map(str, self.terms.values()))})'
+        fields = []
+        for value in self.terms.values():
+            fields.append(str(value).replace('not ', ''))
+        return f'{negation}{self.predicate}({",".join(fields)})'

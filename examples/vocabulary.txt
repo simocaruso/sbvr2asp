@@ -6,7 +6,10 @@ advance rental
 booking date/time
 rental booking
 actual return date/time
+rental organization unit
+
 branch
+Definition: rental organization unit
 
 rental booking has booking date/time
 rental booking establishes advance rental
@@ -69,3 +72,43 @@ rental has pick-up branch
 rental has grace period
 grace period has end date/time
 rental incurs late return charge
+
+location penalty charge
+EU-Rent site
+drop-off location
+rental has drop-off location
+branch is located at EU-Rent site
+rental incurs location penalty charge
+EU-Rent site is base for rental organization unit
+
+rental car is stored at branch
+
+rental charge
+estimated rental charge
+Definition: rental charge
+card
+
+credit card
+Definition: card
+business currency
+driver
+rental has rental charge
+rental charge is calculated in business currency
+
+estimated rental charge is provisionally charged to card
+renter has credit card
+rental has driver
+renter is responsible for rental
+rental has business currency
+
+cash rental
+Definition: rental
+
+cash rental price
+Definition: base rental price
+
+lowest rental price
+Definition: cash rental price
+
+cash rental honors lowest rental price
+cash rental has base rental price
