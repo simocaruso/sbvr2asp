@@ -149,3 +149,13 @@ class SubstituteNode(Node):
 
     def evaluate(self, context: list, register: Register, visited: set, negated=False):
         raise RuntimeError("SubstituteNode should not be evaluated")
+
+
+class Conjunction(Node):
+    def __init__(self, left, right):
+        super().__init__(left, right)
+
+    def reshape(self, tree: list[Node], queue: list[Node]):
+        tree = self.left.reshape(tree, queue)
+        tree = self.right.reshape(tree, queue)
+        return tree

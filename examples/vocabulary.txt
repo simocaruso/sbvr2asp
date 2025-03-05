@@ -44,10 +44,15 @@ Definition: one-way rental
 international inward rental
 Definition: international rental
 
+pick-up branch
+Definition: branch
+
 rented car
 Definition: rental car
 
 country
+grace period
+late return charge
 country of registration
 rented car
 return branch has country
@@ -58,3 +63,9 @@ rental has actual return date/time
 local area owns rental car
 local area includes branch
 branch is included in local area
+rental is open
+rented car is owned by local area
+rental has pick-up branch
+rental has grace period
+grace period has end date/time
+rental incurs late return charge

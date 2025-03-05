@@ -9,7 +9,7 @@ from SBVR2ASP.data_structure.cardinality import ExactCardinality
 from SBVR2ASP.data_structure.concept import Concept
 from SBVR2ASP.data_structure.node import Node
 from SBVR2ASP.data_structure.relation import Relation, MathRelation, SpecificationComplementRelation, AtRelation, \
-    SubstituteNode
+    SubstituteNode, Conjunction
 from SBVR2ASP.register import Register
 
 NEGATIVE = True
@@ -58,8 +58,16 @@ class RulesTransformer(Transformer):
     def after_proposition(self, first, second):
         return MathRelation(first, second, MathOperator.GREATER_THAN)
 
-    def match_proposition(self, first, second):
+    def match_proposition(self, first, negation, second):
+        if negation:
+            second.negated = True
         return MathRelation(first, second, MathOperator.EQUAL)
+
+    def condition_proposition(self, first, second):
+        return Conjunction(first, second)
+
+    def conjunction_proposition(self, first, second):
+        return Conjunction(first, second)
 
     def at_proposition(self, first, second):
         return AtRelation(first, second)
@@ -85,6 +93,9 @@ class RulesTransformer(Transformer):
 
     def verb(self, token):
         return token
+
+    def negation(self):
+        return True
 
     def NEWLINE(self, token):
         return lark.Discard

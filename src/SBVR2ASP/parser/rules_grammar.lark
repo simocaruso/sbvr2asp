@@ -12,12 +12,12 @@ start: proposition+
 
 proposition: proposition_expression "." NEWLINE
 
-modal_operator: "It is obligatory that " -> obligation_formulation
-              | "It is prohibited that " -> obligation_formulation_embedding_logical_negation
-              | "It is necessary that "  -> necessity_formulation
-              | "It is impossible that " -> necessity_formulation_embedding_logical_negation
-              | "It is possible that "   -> possibility_formulation
-              | "It is permitted that "  -> permissibility_formulation
+modal_operator: "it is obligatory that "i -> obligation_formulation
+              | "it is prohibited that "i -> obligation_formulation_embedding_logical_negation
+              | "it is necessary that "i  -> necessity_formulation
+              | "it is impossible that "i -> necessity_formulation_embedding_logical_negation
+              | "it is possible that "i   -> possibility_formulation
+              | "it is permitted that "i  -> permissibility_formulation
 
 quantification: "each "                                 -> universal_quantification
               | "some " | "at least one "               -> existential_quantification
@@ -30,18 +30,25 @@ quantification: "each "                                 -> universal_quantificat
               | "more than one "                        -> at_least_n_quantification_with_n_2
               | "no "                                   -> logical_negation
 
-proposition_expression: modal_operator proposition_expression                     -> modal_proposition
-                      | "at " proposition_expression proposition_expression       -> at_proposition
-                      | proposition_expression verb proposition_expression        -> simple_proposition
-                      | proposition_expression "is after " proposition_expression -> after_proposition
-                      | proposition_expression "is " proposition_expression       -> match_proposition
-                      | concept                                                   -> concept_proposition
+proposition_expression: modal_operator proposition_expression                          -> modal_proposition
+                      | "if "i proposition_expression "then " proposition_expression    -> condition_proposition
+                      | "at " proposition_expression proposition_expression            -> at_proposition
+                      | proposition_expression verb proposition_expression             -> simple_proposition
+                      | proposition_expression "is after " proposition_expression      -> after_proposition
+                      | concept                                                        -> concept_proposition
+                      | proposition_expression "and " proposition_expression           -> conjunction_proposition
+                      | proposition_expression "is " [negation] proposition_expression -> match_proposition
 
 concept: concept "of " "the "? concept ["and " concept]  -> concept_of
        | concept "that " verb concept                    -> concept_that
-       | "the "? [quantification] CNAME " "?
+       | _ARTICLE? [quantification] CNAME " "?
 
 !verb: "has "
     | "includes "
     | "establishes "
     | "owns "
+    | "is owned by "
+    | "incurs "
+
+negation: "not "
+_ARTICLE: "a " | "an " | "the "

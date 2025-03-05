@@ -28,7 +28,6 @@ def process_rules(rules: str, register: Register) -> list[Node]:
     lark = LarkWrapper(Grammar.RULES)
     tree = lark.parse(rules)
     propositions = RulesTransformer(register).transform(tree)
-
     trees = []  # Contains one tree for each proposition
     queue = list(propositions)
     while queue:

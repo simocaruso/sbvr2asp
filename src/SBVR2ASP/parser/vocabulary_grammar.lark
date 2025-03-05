@@ -8,6 +8,9 @@ concept: name [_NEWLINE definition]
           | name " establishes " name
           | name " owns " name
           | name " is included in " name
+          | name " is owned by " name
+          | name " is " name
+          | name " incurs " name
 
 definition: "Definition: " name
 ?name: WORD

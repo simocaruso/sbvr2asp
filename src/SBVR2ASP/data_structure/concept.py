@@ -22,12 +22,12 @@ class Concept(Node):
             if self.cardinality:
                 aggregate = Aggregate(AggregateOperator.COUNT, [atom], [],
                                       guard=self.cardinality.as_guard())
-                if negated:
+                if negated or self.negated:
                     aggregate.negate()
                 new_context = aggregate.aggregate_set_body
                 context.append(aggregate)
             else:
-                if negated:
+                if negated or self.negated:
                     atom.negate()
                 context.append(atom)
             self.evaluate_res = atom, new_context

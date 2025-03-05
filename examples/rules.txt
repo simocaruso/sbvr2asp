@@ -2,7 +2,8 @@ It is necessary that each rental has exactly one requested car group.
 It is necessary that each rental includes exactly one rental period.
 It is necessary that each rental has exactly one return branch.
 It is necessary that the scheduled pick-up date/time of each advance rental is after the booking date/time of the rental booking that establishes the advance rental.
-
 It is obligatory that the country of the return branch of each international inward rental is the country of registration of the rented car of the rental.
 It is obligatory that at the actual return date/time of each in-country rental and each international inward rental the local area of the return branch of the rental owns the rented car of the rental.
-
+It is obligatory that the country of the return branch of each international inward rental is the country of registration of the rented car of the rental.
+It is necessary that if a rental is open and the rental is not an international inward rental then the rented car of the rental is owned by the local area of the pick-up branch of the rental.
+If the actual return date/time of a rental is after the end date/time of the grace period of the rental then it is obligatory that the rental incurs a late return charge.
