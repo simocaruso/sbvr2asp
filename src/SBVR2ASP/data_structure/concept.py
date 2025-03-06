@@ -27,7 +27,7 @@ class Concept(Node):
                 new_context = aggregate.aggregate_set_body
                 context.append(aggregate)
             else:
-                if negated or self.negated:
+                if self.negated:
                     atom.negate()
                 context.append(atom)
             self.evaluate_res = atom, new_context

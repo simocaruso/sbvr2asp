@@ -6,97 +6,78 @@ from SBVR2ASP.register import Register
 
 
 class Relation(Node):
-    def __init__(self, left, right, relation):
+    def __init__(self, left, right):
         super().__init__(left, right)
-        self.relation_name = relation
+
+    def _reshaped_node(self):
+        return Relation(self.left.get_left_most(),
+                        self.right.get_left_most())
 
     def reshape(self, tree: list[Node], queue: list[Node]):
-        res = Relation(self.left.get_left_most(),
-                       self.right.get_left_most(),
-                       self.relation_name)
+        res = self._reshaped_node()
         res.negated = self.negated
         tree.append(res)
         tree = self.left.reshape(tree, queue)
         tree = self.right.reshape(tree, queue)
         return tree
 
+    def _evaluate_left(self, context, register, visited):
+        return self.left.evaluate(context, register, visited)
+
+    def _evaluate_right(self, context, register, visited):
+        return self.right.evaluate(context, register, visited, self.negated)
+
     def evaluate(self, context: list, register: Register, visited: set, negated=False):
         if self.id not in visited:
             visited.add(self.id)
-        left, relation_context = self.left.evaluate(context, register, visited)
-        right, relation_context = self.right.evaluate(context, register, visited, self.negated)
+        left, relation_context = self._evaluate_left(context, register, visited)
+        right, relation_context = self._evaluate_right(context, register, visited)
         relation_atom = register.get_relation(self.left.concept_id, self.right.concept_id)
         if not relation_atom:
             raise RuntimeError(
                 f'No relation between {register.get_concept_name(self.left.concept_id)} and'
                 f' {register.get_concept_name(self.right.concept_id)}')
+        if relation_context == context:
+            # Context changes only in case left or right are aggregates,
+            # and in case they (or at least one) are aggregates the negation is already handled
+            relation_atom.negated = self.negated
         register.link_atoms(relation_atom, left)
         register.link_atoms(relation_atom, right)
         if relation_atom:
             relation_context.append(relation_atom)
 
 
-class ThatRelation(Relation):
-    def __init__(self, left, right, relation):
-        super().__init__(left, right, relation)
+class SwappedLeftMostToRightMostRelation(Relation):
+    """
+    Handle cases like the specification complement where:
+        "a credit card of the renter"
+    left and right children are swap and
+    after the swap left most child is in relation with the right most.
+    """
 
-    def reshape(self, tree: list[Node], queue: list[Node]):
-        res = Relation(self.get_right_most(self.left),
-                       self.get_left_most(self.right),
-                       self.relation_name)
-        res.negated = self.negated
-        tree.append(res)
-        tree = self.left.reshape(tree, queue)
-        tree = self.right.reshape(tree, queue)
-        return [tree]
-
-    def evaluate(self, context: list, register: Register, visited: set, negated=False):
-        super().evaluate(context, register, visited)
-
-
-class SpecificationComplementRelation(Node):
     def __init__(self, left, right):
         super().__init__(left, right)
 
-    def reshape(self, tree: list[Node], queue: list[Node]):
-        res = SpecificationComplementRelation(self.left.get_right_most(),
-                                              self.right.get_left_most())
+    def _reshaped_node(self):
+        res = Relation(self.right.get_left_most(),
+                       self.left.get_right_most())
         res.negated = self.negated
-        tree.append(res)
-        tree = self.left.reshape(tree, queue)
-        tree = self.right.reshape(tree, queue)
-        return tree
-
-    def evaluate(self, context: list, register: Register, visited: set, negated=False):
-        if self.id not in visited:
-            visited.add(self.id)
-        left, new_context = self.left.evaluate(context, register, visited, self.negated)
-        right, new_context = self.right.evaluate(context, register, visited, self.negated)
-        relation_atom = register.get_relation(self.right.concept_id, self.left.concept_id)
-        if not relation_atom:
-            raise RuntimeError(
-                f'No relation between {register.get_concept_name(self.right.concept_id)} and'
-                f' {register.get_concept_name(self.left.concept_id)}')
-        register.link_atoms(relation_atom, left)
-        register.link_atoms(relation_atom, right)
-        if relation_atom:
-            new_context.append(relation_atom)
+        return res
 
 
-class MathRelation(Node):
+class MathRelation(Relation):
     def __init__(self, left, right, operator: MathOperator):
         super().__init__(left, right)
         self.operator = operator
 
-    def reshape(self, tree: list[Node], queue: list[Node]):
-        res = MathRelation(self.left.get_left_most(),
-                           self.right.get_left_most(),
-                           self.operator)
-        res.negated = self.negated
-        tree.append(res)
-        tree = self.left.reshape(tree, queue)
-        tree = self.right.reshape(tree, queue)
-        return tree
+    def _reshaped_node(self):
+        if self.negated and self.right.negated:
+            # Remove double negation
+            self.negated = False
+            self.right.negated = False
+        return MathRelation(self.left.get_left_most(),
+                            self.right.get_left_most(),
+                            self.operator)
 
     def evaluate(self, context: list, register: Register, visited: set, negated=False):
         if self.id not in visited:
@@ -112,17 +93,11 @@ class MathRelation(Node):
         return Math(self.operator, left, right)
 
 
-class AtRelation(Node):
-    def __init__(self, left, right):
-        super().__init__(left, right)
+class Disjunction(Node):
+    """
+    Disjunction is handled creating a new ASP rule and substituting the left child predicate with the right child predicate.
+    """
 
-    def reshape(self, tree: list[Node], queue: list[Node]):
-        tree = self.left.reshape(tree, queue)
-        tree = self.right.reshape(tree, queue)
-        return tree
-
-
-class SubstituteNode(Node):
     def __init__(self, left, right):
         super().__init__(left, right)
         self.left_processed = False
@@ -156,6 +131,10 @@ class SubstituteNode(Node):
 
 
 class Conjunction(Node):
+    """
+    This node simply put together the children.
+    """
+
     def __init__(self, left, right):
         super().__init__(left, right)
 
@@ -163,3 +142,14 @@ class Conjunction(Node):
         tree = self.left.reshape(tree, queue)
         tree = self.right.reshape(tree, queue)
         return tree
+
+
+class Implication(Conjunction):
+    """
+    This node handles logical implications.
+    """
+
+    def reshape(self, tree: list[Node], queue: list[Node]):
+        if self.negated:
+            self.right.negated = not self.right.negated  # A -> B == not (A and not B)
+        return super().reshape(tree, queue)

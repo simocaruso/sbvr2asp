@@ -57,11 +57,12 @@ country
 grace period
 late return charge
 country of registration
+Definition: country
 rented car
-return branch has country
+branch has country
 international inward rental has return branch
 rental has rented car
-rented car has country of registration
+rental car has country of registration
 rental has actual return date/time
 local area owns rental car
 local area includes branch
@@ -112,3 +113,33 @@ Definition: cash rental price
 
 cash rental honors lowest rental price
 cash rental has base rental price
+
+driver
+primary driver
+Definition: driver
+rental has primary driver
+driver is barred
+driver is qualified
+
+rental has renter
+
+need of service
+scheduled service
+rental car is in need of service
+rental car is in need of repair
+rental car has scheduled service
+rental incurs car exchange during rental
+
+car transfer
+transfer drop-off branch
+Definition: branch
+transfer drop-off date/time
+transferred car
+Definition: rental car
+rental car is owned by local area
+local area includes branch
+international return
+Definition: car transfer
+car transfer has transfer drop-off branch
+car transfer has transfer drop-off date/time
+car transfer has transferred car

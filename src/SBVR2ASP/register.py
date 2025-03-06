@@ -17,7 +17,7 @@ class Register:
         res = uuid.uuid4().hex
         while res in self._id_to_name:
             res = uuid.uuid4().hex
-        return 'x' + res
+        return 'conceptidx' + res
 
     def get_register(self) -> dict:
         """

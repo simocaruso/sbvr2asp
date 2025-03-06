@@ -9,10 +9,7 @@ from SBVR2ASP.sbvr2asp import replace_concept_name, process_vocabulary, process_
 from SBVR2ASP.transformers.rules import RulesTransformer
 from SBVR2ASP.transformers.vocabulary import VocabularyTransformer
 
-
-class TestRules(unittest.TestCase):
-    def test_rules(self):
-        vocabulary = dedent('''\
+VOCABULARY = dedent('''\
 rental
 requested car group
 rental period
@@ -72,11 +69,12 @@ country
 grace period
 late return charge
 country of registration
+Definition: country
 rented car
-return branch has country
+branch has country
 international inward rental has return branch
 rental has rented car
-rented car has country of registration
+rental car has country of registration
 rental has actual return date/time
 local area owns rental car
 local area includes branch
@@ -127,44 +125,118 @@ Definition: cash rental price
 
 cash rental honors lowest rental price
 cash rental has base rental price
-                        ''')
-        rules = dedent('''\
-// Rental Rules
-It is necessary that each rental has exactly one requested car group.
-It is necessary that each rental includes exactly one rental period.
-It is necessary that each rental has exactly one return branch.
-It is necessary that the scheduled pick-up date/time of each advance rental is after the booking date/time of the rental booking that establishes the advance rental.
 
-// Charging / Billing / Payment Rules
-It is permitted that a rental is open only if an estimated rental charge is provisionally charged to a credit card of the renter that is responsible for the rental.
-It is necessary that the rental charge of each rental is calculated in the business currency of the rental.
-It is necessary that each cash rental honors the lowest rental price of the cash rental.
+driver
+primary driver
+Definition: driver
+rental has primary driver
+driver is barred
+driver is qualified
 
-// Pick-up / Return Rules
-It is obligatory that the country of the return branch of each international inward rental is the country of registration of the rented car of the rental.
-It is obligatory that at the actual return date/time of each in-country rental and each international inward rental the local area of the return branch of the rental owns the rented car of the rental.
-It is obligatory that the country of the return branch of each international inward rental is the country of registration of the rented car of the rental.
-It is necessary that if a rental is open and the rental is not an international inward rental then the rented car of the rental is owned by the local area of the pick-up branch of the rental.
-If the actual return date/time of a rental is after the end date/time of the grace period of the rental then it is obligatory that the rental incurs a late return charge.
-If the drop-off location of a rental is not the EU-Rent site that is base for the return branch of the rental then it is obligatory that the rental incurs a location penalty charge.
-''')
+rental has renter
+
+need of service
+scheduled service
+rental car is in need of service
+rental car is in need of repair
+rental car has scheduled service
+rental incurs car exchange during rental
+
+car transfer
+transfer drop-off branch
+Definition: branch
+transfer drop-off date/time
+transferred car
+Definition: rental car
+rental car is owned by local area
+local area includes branch
+international return
+Definition: car transfer
+car transfer has transfer drop-off branch
+car transfer has transfer drop-off date/time
+car transfer has transferred car''')
+
+
+class TestRules(unittest.TestCase):
+    def _process(self, rules):
         register = Register()
-        process_vocabulary(vocabulary, register)
+        process_vocabulary(VOCABULARY, register)
         res = process_rules(rules, register)
         res = '\n'.join(map(str, res))
-        self.assertEqual(res, dedent('''\
-:- rental(REN), #count{requested_car_group(REQCARGRO): has(rental(REN),requested_car_group(REQCARGRO))} != 1.
-:- rental(REN), #count{rental_period(RENPER): includes(rental(REN),rental_period(RENPER))} != 1.
-:- rental(REN), #count{return_branch(RETBRA): has(rental(REN),return_branch(RETBRA))} != 1.
-:- scheduled_pick_up_date_time(SCHPICUPDATTIM), booking_date_time(BOODATTIM), SCHPICUPDATTIM <= BOODATTIM, advance_rental(ADVREN), has(advance_rental(ADVREN),scheduled_pick_up_date_time(SCHPICUPDATTIM)), rental_booking(RENBOO), has(rental_booking(RENBOO),booking_date_time(BOODATTIM)), advance_rental(ADVREN), establishes(rental_booking(RENBOO),advance_rental(ADVREN)).
-:- rental(REN), open(OPE), REN = OPE, estimated_rental_charge(ESTRENCHA), not credit_card(CRECAR), is_provisionally_charged_to(estimated_rental_charge(ESTRENCHA),credit_card(CRECAR)), renter(REN), has(renter(REN),credit_card(CRECAR)), rental(REN), is_responsible_for(renter(REN),rental(REN)).
-:- rental_charge(RENCHA), not business_currency(BUSCUR), is_calculated_in(rental_charge(RENCHA),business_currency(BUSCUR)), rental(REN), has(rental(REN),rental_charge(RENCHA)), rental(REN), has(rental(REN),business_currency(BUSCUR)).
-:- cash_rental(CASREN), not lowest_rental_price(LOWRENPRI), honors(cash_rental(CASREN),lowest_rental_price(LOWRENPRI)), cash_rental(CASREN), honors(cash_rental(CASREN),lowest_rental_price(LOWRENPRI)).
-:- country(COU), country_of_registration(COUOFREG), COU = COUOFREG, return_branch(RETBRA), has(return_branch(RETBRA),country(COU)), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),return_branch(RETBRA)), rented_car(RENCAR), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),rented_car(RENCAR)), has(rented_car(RENCAR),country_of_registration(COUOFREG)).
-:- actual_return_date_time(ACTRETDATTIM), in_country_rental(INCOUREN), has(in_country_rental(INCOUREN),actual_return_date_time(ACTRETDATTIM)), local_area(LOCARE), rented_car(RENCAR), owns(local_area(LOCARE),rented_car(RENCAR)), return_branch(RETBRA), in_country_rental(INCOUREN), has(in_country_rental(INCOUREN),return_branch(RETBRA)), is_included_in(return_branch(RETBRA),local_area(LOCARE)), in_country_rental(INCOUREN), has(in_country_rental(INCOUREN),rented_car(RENCAR)).
-:- country(COU), country_of_registration(COUOFREG), COU = COUOFREG, return_branch(RETBRA), has(return_branch(RETBRA),country(COU)), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),return_branch(RETBRA)), rented_car(RENCAR), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),rented_car(RENCAR)), has(rented_car(RENCAR),country_of_registration(COUOFREG)).
-:- rental(REN), open(OPE), REN = OPE, rental(REN), not international_inward_rental(INTINWREN), REN = INTINWREN, rented_car(RENCAR), local_area(LOCARE), is_owned_by(rented_car(RENCAR),local_area(LOCARE)), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),rented_car(RENCAR)), pick_up_branch(PICUPBRA), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),pick_up_branch(PICUPBRA)), is_included_in(pick_up_branch(PICUPBRA),local_area(LOCARE)).
-:- actual_return_date_time(ACTRETDATTIM), end_date_time(ENDDATTIM), ACTRETDATTIM > ENDDATTIM, rental(REN), has(rental(REN),actual_return_date_time(ACTRETDATTIM)), grace_period(GRAPER), rental(REN), has(rental(REN),grace_period(GRAPER)), has(grace_period(GRAPER),end_date_time(ENDDATTIM)), rental(REN), late_return_charge(LATRETCHA), incurs(rental(REN),late_return_charge(LATRETCHA)).
-:- drop_off_location(DROOFFLOC), EU_Rent_site(EURENSIT), DROOFFLOC = EURENSIT, rental(REN), has(rental(REN),drop_off_location(DROOFFLOC)), not return_branch(RETBRA), not rental(REN), has(rental(REN),return_branch(RETBRA)), is_base_for(EU_Rent_site(EURENSIT),return_branch(RETBRA)), rental(REN), location_penalty_charge(LOCPENCHA), incurs(rental(REN),location_penalty_charge(LOCPENCHA)).
-:- actual_return_date_time(ACTRETDATTIM), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),actual_return_date_time(ACTRETDATTIM)), local_area(LOCARE), rented_car(RENCAR), owns(local_area(LOCARE),rented_car(RENCAR)), return_branch(RETBRA), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),return_branch(RETBRA)), is_included_in(return_branch(RETBRA),local_area(LOCARE)), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),rented_car(RENCAR)).
-''').strip())
+        return res
+
+    def test_rental_rules(self):
+        rules = dedent('''\
+                    // Rental Rules
+                    It is necessary that each rental has exactly one requested car group.
+                    It is necessary that each rental includes exactly one rental period.
+                    It is necessary that each rental has exactly one return branch.
+                    It is necessary that the scheduled pick-up date/time of each advance rental is after the booking date/time of the rental booking that establishes the advance rental.
+                    ''')
+        self.assertEqual(self._process(rules), dedent('''\
+                            :- rental(REN), #count{requested_car_group(REQCARGRO): has(rental(REN),requested_car_group(REQCARGRO))} != 1.
+                            :- rental(REN), #count{rental_period(RENPER): includes(rental(REN),rental_period(RENPER))} != 1.
+                            :- rental(REN), #count{return_branch(RETBRA): has(rental(REN),return_branch(RETBRA))} != 1.
+                            :- scheduled_pick_up_date_time(SCHPICUPDATTIM), booking_date_time(BOODATTIM), SCHPICUPDATTIM <= BOODATTIM, advance_rental(ADVREN), has(advance_rental(ADVREN),scheduled_pick_up_date_time(SCHPICUPDATTIM)), rental_booking(RENBOO), has(rental_booking(RENBOO),booking_date_time(BOODATTIM)), advance_rental(ADVREN), establishes(rental_booking(RENBOO),advance_rental(ADVREN)).
+                            ''').strip())
+
+    def test_payment_rules(self):
+        rules = dedent('''\
+                    // Charging / Billing / Payment Rules
+                    It is permitted that a rental is open only if an estimated rental charge is provisionally charged to a credit card of the renter that is responsible for the rental.
+                    It is necessary that the rental charge of each rental is calculated in the business currency of the rental.
+                    It is necessary that each cash rental honors the lowest rental price of the cash rental.''')
+        self.assertEqual(self._process(rules), dedent('''\
+                                :- rental(REN), open(OPE), REN = OPE, estimated_rental_charge(ESTRENCHA), credit_card(CRECAR), not is_provisionally_charged_to(estimated_rental_charge(ESTRENCHA),credit_card(CRECAR)), renter(REN), has(renter(REN),credit_card(CRECAR)), rental(REN), is_responsible_for(renter(REN),rental(REN)).
+                                :- rental_charge(RENCHA), business_currency(BUSCUR), not is_calculated_in(rental_charge(RENCHA),business_currency(BUSCUR)), rental(REN), has(rental(REN),rental_charge(RENCHA)), rental(REN), has(rental(REN),business_currency(BUSCUR)).
+                                :- cash_rental(CASREN), lowest_rental_price(LOWRENPRI), not honors(cash_rental(CASREN),lowest_rental_price(LOWRENPRI)), cash_rental(CASREN), honors(cash_rental(CASREN),lowest_rental_price(LOWRENPRI)).''').strip())
+
+    def test_driver_rules(self):
+        rules = dedent('''\
+        // Driver rules
+        It is permitted that a rental is open only if each driver of the rental is not a barred driver.
+        It is obligatory that each driver of a rental is qualified.''')
+        self.assertEqual(self._process(rules), dedent('''\
+                                :- rental(REN), open(OPE), REN = OPE, driver(DRI), driver(DRI), DRI = DRI, rental(REN), has(rental(REN),driver(DRI)), barred(BAR), is(driver(DRI),barred(BAR)).
+                                :- driver(DRI), qualified(QUA), DRI = QUA, rental(REN), has(rental(REN),driver(DRI)).
+                                ''').strip())
+
+    def test_return_rules(self):
+        rules = dedent('''\
+                    // Pick-up / Return Rules
+                    It is obligatory that the country of the return branch of each international inward rental is the country of registration of the rented car of the rental.
+                    It is obligatory that at the actual return date/time of each in-country rental and each international inward rental the local area of the return branch of the rental owns the rented car of the rental.
+                    It is obligatory that the country of the return branch of each international inward rental is the country of registration of the rented car of the rental.
+                    It is necessary that if a rental is open and the rental is not an international inward rental then the rented car of the rental is owned by the local area of the pick-up branch of the rental.
+                    If the actual return date/time of a rental is after the end date/time of the grace period of the rental then it is obligatory that the rental incurs a late return charge.
+                    If the drop-off location of a rental is not the EU-Rent site that is base for the return branch of the rental then it is obligatory that the rental incurs a location penalty charge.
+                    ''')
+        self.assertEqual(self._process(rules), dedent('''\
+                                        :- country(COU), country_of_registration(COUOFREG), COU = COUOFREG, return_branch(RETBRA), has(return_branch(RETBRA),country(COU)), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),return_branch(RETBRA)), international_inward_rental(INTINWREN), rented_car(RENCAR), has(international_inward_rental(INTINWREN),rented_car(RENCAR)), has(rented_car(RENCAR),country_of_registration(COUOFREG)).
+                                        :- in_country_rental(INCOUREN), actual_return_date_time(ACTRETDATTIM), has(in_country_rental(INCOUREN),actual_return_date_time(ACTRETDATTIM)), local_area(LOCARE), rented_car(RENCAR), owns(local_area(LOCARE),rented_car(RENCAR)), in_country_rental(INCOUREN), return_branch(RETBRA), has(in_country_rental(INCOUREN),return_branch(RETBRA)), is_included_in(return_branch(RETBRA),local_area(LOCARE)), in_country_rental(INCOUREN), has(in_country_rental(INCOUREN),rented_car(RENCAR)).
+                                        :- country(COU), country_of_registration(COUOFREG), COU = COUOFREG, return_branch(RETBRA), has(return_branch(RETBRA),country(COU)), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),return_branch(RETBRA)), international_inward_rental(INTINWREN), rented_car(RENCAR), has(international_inward_rental(INTINWREN),rented_car(RENCAR)), has(rented_car(RENCAR),country_of_registration(COUOFREG)).
+                                        :- rental(REN), open(OPE), REN = OPE, rental(REN), not international_inward_rental(INTINWREN), REN = INTINWREN, rented_car(RENCAR), local_area(LOCARE), not is_owned_by(rented_car(RENCAR),local_area(LOCARE)), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),rented_car(RENCAR)), international_inward_rental(INTINWREN), pick_up_branch(PICUPBRA), has(international_inward_rental(INTINWREN),pick_up_branch(PICUPBRA)), is_included_in(pick_up_branch(PICUPBRA),local_area(LOCARE)).
+                                        :- actual_return_date_time(ACTRETDATTIM), end_date_time(ENDDATTIM), ACTRETDATTIM > ENDDATTIM, rental(REN), has(rental(REN),actual_return_date_time(ACTRETDATTIM)), rental(REN), grace_period(GRAPER), has(rental(REN),grace_period(GRAPER)), has(grace_period(GRAPER),end_date_time(ENDDATTIM)), rental(REN), late_return_charge(LATRETCHA), incurs(rental(REN),late_return_charge(LATRETCHA)).
+                                        :- drop_off_location(DROOFFLOC), EU_Rent_site(EURENSIT), DROOFFLOC = EURENSIT, rental(REN), has(rental(REN),drop_off_location(DROOFFLOC)), rental(REN), return_branch(RETBRA), not has(rental(REN),return_branch(RETBRA)), is_base_for(EU_Rent_site(EURENSIT),return_branch(RETBRA)), rental(REN), location_penalty_charge(LOCPENCHA), incurs(rental(REN),location_penalty_charge(LOCPENCHA)).
+                                        :- international_inward_rental(INTINWREN), actual_return_date_time(ACTRETDATTIM), has(international_inward_rental(INTINWREN),actual_return_date_time(ACTRETDATTIM)), local_area(LOCARE), rented_car(RENCAR), owns(local_area(LOCARE),rented_car(RENCAR)), international_inward_rental(INTINWREN), return_branch(RETBRA), has(international_inward_rental(INTINWREN),return_branch(RETBRA)), is_included_in(return_branch(RETBRA),local_area(LOCARE)), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),rented_car(RENCAR)).
+                                        ''').strip())
+
+    def test_servicing_rules(self):
+        rules = dedent('''
+                // Servicing Rules
+                If the rented car of an open rental is in need of service or is in need of repair then it is obligatory that the rental incurs a car exchange during rental.
+                ''')
+        self.assertEqual(self._process(rules), dedent('''\
+                            :- rented_car(RENCAR), in_need_of_service(INNEEOFSER), RENCAR = INNEEOFSER, rental(REN), has(rental(REN),rented_car(RENCAR)), open(OPE), is(rental(REN),open(OPE)), rental(REN), car_exchange_during_rental(CAREXCDURREN), incurs(rental(REN),car_exchange_during_rental(CAREXCDURREN)).
+                            :- rented_car(RENCAR), in_need_of_repair(INNEEOFREP), RENCAR = INNEEOFREP, rental(REN), has(rental(REN),rented_car(RENCAR)), open(OPE), is(rental(REN),open(OPE)), rental(REN), car_exchange_during_rental(CAREXCDURREN), incurs(rental(REN),car_exchange_during_rental(CAREXCDURREN)).
+                            ''').strip())
+
+    def test_transfer_rules(self):
+        rules = dedent('''
+                // Transfer Rules
+                At the transfer drop-off date/time of a car transfer it is obligatory that the transferred car of the car transfer is owned by the local area that includes the transfer drop-off branch of the car transfer.
+                It is obligatory that the country of the transfer drop-off branch of an international return is the country of registration of the transferred car of the international return.''')
+        self.assertEqual(self._process(rules), dedent('''\
+                                    :- car_transfer(CARTRA), transfer_drop_off_date_time(TRADROOFFDATTIM), has(car_transfer(CARTRA),transfer_drop_off_date_time(TRADROOFFDATTIM)), transferred_car(TRACAR), local_area(LOCARE), is_owned_by(transferred_car(TRACAR),local_area(LOCARE)), car_transfer(CARTRA), has(car_transfer(CARTRA),transferred_car(TRACAR)), car_transfer(CARTRA), transfer_drop_off_branch(TRADROOFFBRA), has(car_transfer(CARTRA),transfer_drop_off_branch(TRADROOFFBRA)), includes(local_area(LOCARE),transfer_drop_off_branch(TRADROOFFBRA)).
+                                    :- country(COU), country_of_registration(COUOFREG), COU = COUOFREG, transfer_drop_off_branch(TRADROOFFBRA), has(transfer_drop_off_branch(TRADROOFFBRA),country(COU)), international_return(INTRET), has(international_return(INTRET),transfer_drop_off_branch(TRADROOFFBRA)), international_return(INTRET), transferred_car(TRACAR), has(international_return(INTRET),transferred_car(TRACAR)), has(transferred_car(TRACAR),country_of_registration(COUOFREG)).
+                                    ''').strip())
