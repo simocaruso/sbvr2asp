@@ -25,20 +25,20 @@ If the drop-off location of a rental is not the EU-Rent site that is base for th
 // At the actual start date/time of each rental it is obligatory that the fuel level of the rented car of the rental is full. -- Handle values of entity "fuel level"
 
 // Points Rental Rules
-// It is necessary that the booking date/time of a points rental is at least 5 days before the scheduled start date/time of the rental. -- days concept?
-// It is necessary that the renter of each points rental is a club member. -- property not defined?
+// It is necessary that the booking date/time of a points rental is at least 5 days before the scheduled start date/time of the rental. -- days concept in between a property
+It is necessary that the renter of each points rental is a club member.
 
 // Rental Period Rules
 // It is obligatory that the start date of each reserved rental is in the future. -- future?
-// It is obligatory that the rental duration of each rental is at most 90 rental days. -- days?
+It is obligatory that the rental duration of each rental is at most 90 rental days.
 // If rental1 is not rental2 and the renter of rental1 is the renter of rental2 then it is obligatory that the rental period of rental1 does not overlap the rental period of rental2.
 
 // Servicing Rules
-// It is obligatory that each rental car in need of service has a scheduled service. -- inverted wrt barred driver
-// It is obligatory that the service reading of a rental car is at most 5500 miles. -- miles?
+It is obligatory that each rental car in need of service has a scheduled service.
+It is obligatory that the service reading of a rental car is at most 5500 miles.
 If the rented car of an open rental is in need of service or is in need of repair then it is obligatory that the rental incurs a car exchange during rental.
 
 // Transfer Rules
 At the transfer drop-off date/time of a car transfer it is obligatory that the transferred car of the car transfer is owned by the local area that includes the transfer drop-off branch of the car transfer.
 It is obligatory that the country of the transfer drop-off branch of an international return is the country of registration of the transferred car of the international return.
-// At the drop-off date/time of an international return it is obligatory that the transferred car of the international return is owned by the local area that includes the transfer drop-off branch of the international return.
+// At the drop-off date/time of an international return it is obligatory that the transferred car of the international return is owned by the local area that includes the transfer drop-off branch of the international return. -- drop-off date/time is not defined

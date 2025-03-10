@@ -1,8 +1,9 @@
 %import common.WORD
 %import common.NEWLINE
 
-start: ((concept | property) _NEWLINE)+
+start: ((concept | property | value) _NEWLINE)+
 concept: name [_NEWLINE definition]
+value: name ": name"
 !property.1: name " has " name
           | name " includes " name
           | name " establishes " name

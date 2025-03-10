@@ -23,6 +23,9 @@ class VocabularyTransformer(Transformer):
     def definition(self, name):
         return name
 
+    def value(self, value):
+        self.register.add_value(value)
+
     def spaced_name(self, first, second):
         return f"{first} {second}"
 

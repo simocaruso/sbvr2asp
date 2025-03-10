@@ -5,11 +5,12 @@ import lark
 from lark import Transformer, v_args
 
 from SBVR2ASP.asp.math import MathOperator
-from SBVR2ASP.data_structure.cardinality import ExactCardinality
+from SBVR2ASP.data_structure.cardinality import ExactCardinality, Cardinality
 from SBVR2ASP.data_structure.concept import Concept
 from SBVR2ASP.data_structure.node import Node
 from SBVR2ASP.data_structure.relation import Relation, MathRelation, SwappedLeftMostToRightMostRelation, \
     Disjunction, Conjunction, Implication
+from SBVR2ASP.data_structure.value import Value
 from SBVR2ASP.register import Register
 
 NEGATIVE = True
@@ -49,6 +50,9 @@ class RulesTransformer(Transformer):
 
     def exactly_one_quantification(self):
         return ExactCardinality(1)
+
+    def at_most_n_quantification(self, n):
+        return Cardinality(0, n)
 
     def modal_proposition(self, modal_operator, proposition_expression):
         if modal_operator == POSITIVE:
@@ -100,6 +104,8 @@ class RulesTransformer(Transformer):
         return Relation(second, first)
 
     def concept(self, quantification, name):
+        if self._register.is_value(name):
+            return Value(name, quantification)
         subclasses = self._register.get_subclasses(name)
         for subclass in subclasses:
             if subclass in self._visited_concepts:

@@ -11,6 +11,7 @@ class Register:
         self._name_to_id = {}  # concept name, mapped id
         self._id_to_name = {}
         self._properties = {}  # tuple of entities
+        self._values = {}      # used to track values
         self._subclasses = defaultdict(list)  # list of subclasses of a concept
 
     def _generate_id(self) -> str:
@@ -73,18 +74,18 @@ class Register:
         return Atom(self._clear_name(predicate), terms)
 
     def link_atoms(self, relation: Atom, atom: Atom):
-        self.init(atom)
+        atom.init()
         relation.terms[atom.predicate] = atom
-
-    def init(self, atom: Atom):
-        if atom.terms['id'] == ASP_NULL:
-            atom.terms['id'] = Term(''.join([x[0:3] for x in atom.predicate.split('_')]).upper())
 
     def add_subclass(self, concept: str, superclass: str):
         self._subclasses[self.get_concept_id(superclass)].append(self.get_concept_id(concept))
 
     def get_subclasses(self, concept: str) -> list[str]:
         return self._subclasses[concept]
+
+    def add_value(self, value: str):
+        self.add_concept(value)
+        self._values[self.get_concept_id(value)] = value
 
     def process_subclasses(self):
         # Set all subclasses
@@ -104,3 +105,8 @@ class Register:
             for subclass in self._subclasses[concepts[1]]:
                 new_entries[(concepts[0], subclass)] = property_name
         self._properties.update(new_entries)
+
+    def is_value(self, name):
+        if name in self._values:
+            return True
+        return False

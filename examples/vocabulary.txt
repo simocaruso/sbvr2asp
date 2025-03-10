@@ -143,3 +143,23 @@ Definition: car transfer
 car transfer has transfer drop-off branch
 car transfer has transfer drop-off date/time
 car transfer has transferred car
+
+points rental
+Definition: rental
+
+club member
+Definition: renter
+start date/time
+actual start date/time
+Definition: start date/time
+rental has start date/time
+rental car has fuel level
+
+full: name
+miles: name
+
+rental car has service reading
+rental has rental duration
+service reading
+rental duration
+rental days: name

@@ -154,7 +154,27 @@ international return
 Definition: car transfer
 car transfer has transfer drop-off branch
 car transfer has transfer drop-off date/time
-car transfer has transferred car''')
+car transfer has transferred car
+
+points rental
+Definition: rental
+
+club member
+Definition: renter
+start date/time
+actual start date/time
+Definition: start date/time
+rental has start date/time
+rental car has fuel level
+
+full: name
+miles: name
+
+rental car has service reading
+rental has rental duration
+service reading
+rental duration
+rental days: name''')
 
 
 class TestRules(unittest.TestCase):
@@ -221,14 +241,36 @@ class TestRules(unittest.TestCase):
                                         :- international_inward_rental(INTINWREN), actual_return_date_time(ACTRETDATTIM), has(international_inward_rental(INTINWREN),actual_return_date_time(ACTRETDATTIM)), local_area(LOCARE), rented_car(RENCAR), owns(local_area(LOCARE),rented_car(RENCAR)), international_inward_rental(INTINWREN), return_branch(RETBRA), has(international_inward_rental(INTINWREN),return_branch(RETBRA)), is_included_in(return_branch(RETBRA),local_area(LOCARE)), international_inward_rental(INTINWREN), has(international_inward_rental(INTINWREN),rented_car(RENCAR)).
                                         ''').strip())
 
+    def test_rental_period(self):
+        rules = dedent('''\
+                        // Rental Period Rules
+                        It is obligatory that the rental duration of each rental is at most 90 rental days.
+                        ''')
+        self.assertEqual(self._process(rules), dedent('''\
+                                    :- rental_duration(RENDUR), RENDUR < 90, rental(REN), has(rental(REN),rental_duration(RENDUR)).
+                                    ''').strip())
+
     def test_servicing_rules(self):
-        rules = dedent('''
+        rules = dedent('''\
                 // Servicing Rules
+                It is obligatory that each rental car in need of service has a scheduled service.
+                It is obligatory that the service reading of a rental car is at most 5500 miles.
                 If the rented car of an open rental is in need of service or is in need of repair then it is obligatory that the rental incurs a car exchange during rental.
                 ''')
         self.assertEqual(self._process(rules), dedent('''\
+                            :- rental_car(RENCAR), scheduled_service(SCHSER), has(rental_car(RENCAR),scheduled_service(SCHSER)), in_need_of_service(INNEEOFSER), is(rental_car(RENCAR),in_need_of_service(INNEEOFSER)).
+                            :- service_reading(SERREA), SERREA < 5500, rental_car(RENCAR), has(rental_car(RENCAR),service_reading(SERREA)).
                             :- rented_car(RENCAR), in_need_of_service(INNEEOFSER), RENCAR = INNEEOFSER, rental(REN), has(rental(REN),rented_car(RENCAR)), open(OPE), is(rental(REN),open(OPE)), rental(REN), car_exchange_during_rental(CAREXCDURREN), incurs(rental(REN),car_exchange_during_rental(CAREXCDURREN)).
                             :- rented_car(RENCAR), in_need_of_repair(INNEEOFREP), RENCAR = INNEEOFREP, rental(REN), has(rental(REN),rented_car(RENCAR)), open(OPE), is(rental(REN),open(OPE)), rental(REN), car_exchange_during_rental(CAREXCDURREN), incurs(rental(REN),car_exchange_during_rental(CAREXCDURREN)).
+                            ''').strip())
+
+    def test_points_rental_rules(self):
+        rules = dedent('''
+                    // Points Rental Rules
+                    It is necessary that the renter of each points rental is a club member.
+                    ''')
+        self.assertEqual(self._process(rules), dedent('''\
+                            :- renter(REN), club_member(CLUMEM), REN != CLUMEM, points_rental(POIREN), has(points_rental(POIREN),renter(REN)).
                             ''').strip())
 
     def test_transfer_rules(self):

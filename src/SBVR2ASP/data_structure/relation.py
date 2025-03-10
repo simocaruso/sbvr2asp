@@ -84,9 +84,9 @@ class MathRelation(Relation):
             visited.add(self.id)
         left, new_context = self.left.evaluate(context, register, visited)
         right, new_context = self.right.evaluate(context, register, visited)
-        register.init(left)
-        register.init(right)
-        res = Math(self.operator, left.terms['id'], right.terms['id'])
+        left.init()
+        right.init()
+        res = Math(self.operator, left.as_operand(), right.as_operand())
         if self.negated:
             res.negate()
         new_context.append(res)
