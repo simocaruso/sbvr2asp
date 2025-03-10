@@ -1,6 +1,11 @@
 rental
 requested car group
+period
 rental period
+Definition: period
+
+period overlap period
+
 scheduled pick-up date/time
 advance rental
 booking date/time
@@ -163,3 +168,4 @@ rental has rental duration
 service reading
 rental duration
 rental days: name
+

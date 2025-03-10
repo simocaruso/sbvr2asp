@@ -14,7 +14,7 @@ def replace_concept_name(register: dict, text: str) -> str:
     concept_names = list(register.keys())
     concept_names.sort(key=len, reverse=True)
     for concept_name in concept_names:
-        text = text.replace(concept_name, register[concept_name])
+        text = text.replace(concept_name, register[concept_name] + '#')
     return text
 
 

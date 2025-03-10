@@ -5,10 +5,11 @@ from SBVR2ASP.register import Register
 
 
 class Concept(Node):
-    def __init__(self, concept_id, cardinality=None):
+    def __init__(self, concept_id, cardinality=None, label=None):
         super().__init__()
         self.concept_id = concept_id
         self.cardinality = cardinality
+        self.label = label
         self.evaluate_res = None
 
     def reshape(self, tree: list[Node], queue):
@@ -18,6 +19,7 @@ class Concept(Node):
         if self.id not in visited:
             visited.add(self.id)
             atom = register.get_atom(self.concept_id)
+            atom.label = self.label
             new_context = context
             if self.cardinality:
                 aggregate = Aggregate(AggregateOperator.COUNT, [atom], [],

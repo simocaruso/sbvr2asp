@@ -59,8 +59,11 @@ class RulesTransformer(Transformer):
             proposition_expression.negated = not proposition_expression.negated
         return proposition_expression
 
-    def simple_proposition(self, subj, verb, obj):
-        return Relation(subj, obj)
+    def simple_proposition(self, subj, verb_negation, verb, obj):
+        res = Relation(subj, obj)
+        if verb_negation:
+            res.negated = True
+        return res
 
     def after_proposition(self, first, second):
         return MathRelation(first, second, MathOperator.GREATER_THAN)
@@ -103,7 +106,7 @@ class RulesTransformer(Transformer):
             return Relation(first, second)
         return Relation(second, first)
 
-    def concept(self, quantification, name):
+    def concept(self, quantification, name, label):
         if self._register.is_value(name):
             return Value(name, quantification)
         subclasses = self._register.get_subclasses(name)
@@ -111,7 +114,7 @@ class RulesTransformer(Transformer):
             if subclass in self._visited_concepts:
                 return Concept(subclass, quantification)
         self._visited_concepts.add(name)
-        return Concept(name, quantification)
+        return Concept(name, quantification, label)
 
     def verb(self, token):
         return token

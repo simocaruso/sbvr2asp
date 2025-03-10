@@ -8,6 +8,7 @@ value: name ": name"
           | name " includes " name
           | name " establishes " name
           | name " owns " name
+          | name " overlap " name
           | name " is included in " name
           | name " is owned by " name
           | name " is base for " name
