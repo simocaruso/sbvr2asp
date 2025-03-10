@@ -14,17 +14,25 @@ class Value(Node):
         self.evaluate_res = None
 
     def reshape(self, tree: list[Node], queue):
-        if self.value.upper_bound == self.value.lower_bound:
-            tree[0].operator = MathOperator.LESS_THAN
-        elif not self.value.upper_bound or not self.value.lower_bound:
-            tree[0].operator = MathOperator.LESS_THAN
+        if self.value:
+            # We have a value when we have a cardinality.
+            # e.g at most 9 days
+            # otherwise the concept name is itself the value
+            # e.g. full
+            if self.value.upper_bound == self.value.lower_bound:
+                tree[0].operator = MathOperator.LESS_THAN
+            elif not self.value.upper_bound or not self.value.lower_bound:
+                tree[0].operator = MathOperator.LESS_THAN
         return tree
 
     def evaluate(self, context: list, register: Register, visited: set, negated=False):
-        value = self.value.upper_bound
-        if not self.value.upper_bound:
-            value = self.value.lower_bound
-        return Term(self.value.upper_bound), context
+        value = register.get_concept_name(self.concept_id)
+        if self.value is not None:
+            if not self.value.upper_bound:
+                value = self.value.lower_bound
+            elif not self.value.lower_bound:
+                value = self.value.upper_bound
+        return Term(value), context
 
     def __repr__(self):
         return str(self.value)

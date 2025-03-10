@@ -22,7 +22,7 @@ It is necessary that if a rental is open and the rental is not an international 
 If the actual return date/time of a rental is after the end date/time of the grace period of the rental then it is obligatory that the rental incurs a late return charge.
 If the drop-off location of a rental is not the EU-Rent site that is base for the return branch of the rental then it is obligatory that the rental incurs a location penalty charge.
 // If a rental is assigned then it is obligatory that the rented car of the rental is stored at the pick-up branch of the rental. -- How to handle "assigned"?
-// At the actual start date/time of each rental it is obligatory that the fuel level of the rented car of the rental is full. -- Handle values of entity "fuel level"
+At the actual start date/time of each rental it is obligatory that the fuel level of the rented car of the rental is full.
 
 // Points Rental Rules
 // It is necessary that the booking date/time of a points rental is at least 5 days before the scheduled start date/time of the rental. -- days concept in between a property
