@@ -168,4 +168,7 @@ rental has rental duration
 service reading
 rental duration
 rental days: name
-
+days
+scheduled start date/time
+rental has scheduled start date/time
+rental has booking date/time

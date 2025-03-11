@@ -75,7 +75,11 @@ class Register:
 
     def link_atoms(self, relation: Atom, atom: Atom):
         atom.init()
-        relation.terms[atom.predicate] = atom
+        if relation.terms[atom.predicate] == ASP_NULL:
+            relation.terms[atom.predicate] = atom
+        else:
+            relation.terms[f'{atom.predicate}_1'] = atom
+
 
     def add_subclass(self, concept: str, superclass: str):
         self._subclasses[self.get_concept_id(superclass)].append(self.get_concept_id(concept))

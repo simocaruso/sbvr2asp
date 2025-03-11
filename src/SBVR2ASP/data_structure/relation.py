@@ -34,6 +34,8 @@ class Relation(Node):
         right, relation_context = self._evaluate_right(context, register, visited)
         relation_atom = register.get_relation(self.left.concept_id, self.right.concept_id)
         if not relation_atom:
+            relation_atom = register.get_relation(self.right.concept_id, self.left.concept_id)
+        if not relation_atom:
             raise RuntimeError(
                 f'No relation between {register.get_concept_name(self.left.concept_id)} and'
                 f' {register.get_concept_name(self.right.concept_id)}')
@@ -45,6 +47,7 @@ class Relation(Node):
         register.link_atoms(relation_atom, right)
         if relation_atom:
             relation_context.append(relation_atom)
+        return relation_atom, relation_context
 
 
 class SwappedLeftMostToRightMostRelation(Relation):
@@ -79,18 +82,26 @@ class MathRelation(Relation):
                             self.right.get_left_most(),
                             self.operator)
 
+    def get_left_most(self):
+        return self
+
+    def get_right_most(self):
+        return self
+
     def evaluate(self, context: list, register: Register, visited: set, negated=False):
         if self.id not in visited:
             visited.add(self.id)
-        left, new_context = self.left.evaluate(context, register, visited)
-        right, new_context = self.right.evaluate(context, register, visited)
+        left, new_context = self.left.get_left_most().evaluate(context, register, visited)
+        right, new_context = self.right.get_left_most().evaluate(context, register, visited)
         left.init()
         right.init()
         res = Math(self.operator, left.as_operand(), right.as_operand())
         if self.negated:
             res.negate()
-        new_context.append(res)
-        return Math(self.operator, left, right)
+        if self.operator not in [MathOperator.SUM, MathOperator.PRODUCT, MathOperator.DIFFERENCE,
+                                 MathOperator.DIVISION, MathOperator.ABSOLUTE, MathOperator.MODULO]:
+            new_context.append(res)
+        return res, new_context
 
 
 class Disjunction(Node):

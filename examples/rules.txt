@@ -25,13 +25,13 @@ If the drop-off location of a rental is not the EU-Rent site that is base for th
 At the actual start date/time of each rental it is obligatory that the fuel level of the rented car of the rental is full.
 
 // Points Rental Rules
-// It is necessary that the booking date/time of a points rental is at least 5 days before the scheduled start date/time of the rental. -- days concept in between a property
+It is necessary that the booking date/time of a points rental is at least 5 days before the scheduled start date/time of the rental.
 It is necessary that the renter of each points rental is a club member.
 
 // Rental Period Rules
 // It is obligatory that the start date of each reserved rental is in the future. -- future?
 It is obligatory that the rental duration of each rental is at most 90 rental days.
-// If rental1 is not rental2 and the renter of rental1 is the renter of rental2 then it is obligatory that the rental period of rental1 does not overlap the rental period of rental2.
+If rental1 is not rental2 and the renter of rental1 is the renter of rental2 then it is obligatory that the rental period of rental1 does not overlap the rental period of rental2.
 
 // Servicing Rules
 It is obligatory that each rental car in need of service has a scheduled service.

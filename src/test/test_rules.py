@@ -12,7 +12,12 @@ from SBVR2ASP.transformers.vocabulary import VocabularyTransformer
 VOCABULARY = dedent('''\
 rental
 requested car group
+period
 rental period
+Definition: period
+
+period overlap period
+
 scheduled pick-up date/time
 advance rental
 booking date/time
@@ -174,7 +179,11 @@ rental car has service reading
 rental has rental duration
 service reading
 rental duration
-rental days: name''')
+rental days: name
+days
+scheduled start date/time
+rental has scheduled start date/time
+rental has booking date/time''')
 
 
 class TestRules(unittest.TestCase):
@@ -245,9 +254,11 @@ class TestRules(unittest.TestCase):
         rules = dedent('''\
                         // Rental Period Rules
                         It is obligatory that the rental duration of each rental is at most 90 rental days.
+                        If rental1 is not rental2 and the renter of rental1 is the renter of rental2 then it is obligatory that the rental period of rental1 does not overlap the rental period of rental2.
                         ''')
         self.assertEqual(self._process(rules), dedent('''\
                                     :- rental_duration(RENDUR), RENDUR < 90, rental(REN), has(rental(REN),rental_duration(RENDUR)).
+                                    :- rental(REN_1), not rental(REN_2), REN_1 = REN_2, renter(REN), renter(REN), REN = REN, rental(REN_1), has(rental(REN_1),renter(REN)), rental(REN_2), has(rental(REN_2),renter(REN)), rental_period(RENPER), rental_period(RENPER), not overlap(rental_period(RENPER),rental_period(RENPER)), rental(REN_1), includes(rental(REN_1),rental_period(RENPER)), rental(REN_2), includes(rental(REN_2),rental_period(RENPER)).
                                     ''').strip())
 
     def test_servicing_rules(self):
@@ -268,9 +279,11 @@ class TestRules(unittest.TestCase):
         rules = dedent('''
                     // Points Rental Rules
                     It is necessary that the renter of each points rental is a club member.
+                    It is necessary that the booking date/time of a points rental is at least 5 days before the scheduled start date/time of the rental.
                     ''')
         self.assertEqual(self._process(rules), dedent('''\
                             :- renter(REN), club_member(CLUMEM), REN != CLUMEM, points_rental(POIREN), has(points_rental(POIREN),renter(REN)).
+                            :- booking_date_time(BOODATTIM), scheduled_start_date_time(SCHSTADATTIM), BOODATTIM+5 <= SCHSTADATTIM, points_rental(POIREN), has(points_rental(POIREN),booking_date_time(BOODATTIM)), points_rental(POIREN), has(points_rental(POIREN),scheduled_start_date_time(SCHSTADATTIM)).
                             ''').strip())
 
     def test_transfer_rules(self):

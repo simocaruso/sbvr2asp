@@ -24,6 +24,9 @@ class Math(Literal):
         self.operator = operator
         self.operands = operands
 
+    def init(self):
+        pass
+
     def negate(self):
         table = {MathOperator.GREATER_THAN: MathOperator.LESS_THAN_OR_EQUAL,
                  MathOperator.GREATER_THAN_OR_EQUAL: MathOperator.LESS_THAN,
@@ -32,6 +35,9 @@ class Math(Literal):
                  MathOperator.EQUAL: MathOperator.NOT_EQUAL,
                  MathOperator.NOT_EQUAL: MathOperator.EQUAL}
         self.operator = table[self.operator]
+
+    def as_operand(self):
+        return self
 
     def __str__(self):
         if self.operator == MathOperator.ABSOLUTE:

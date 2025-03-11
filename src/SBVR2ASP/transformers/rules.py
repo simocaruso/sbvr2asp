@@ -51,6 +51,9 @@ class RulesTransformer(Transformer):
     def exactly_one_quantification(self):
         return ExactCardinality(1)
 
+    def at_least_n_quantification(self, n):
+        return Cardinality(n, 0)
+
     def at_most_n_quantification(self, n):
         return Cardinality(0, n)
 
@@ -65,8 +68,17 @@ class RulesTransformer(Transformer):
             res.negated = True
         return res
 
-    def after_proposition(self, first, second):
+    def after_proposition(self, first, quantification, second):
+        if quantification:
+            return MathRelation(MathRelation(first, Value(quantification.concept_id, quantification.cardinality),
+                                             MathOperator.SUM), second, MathOperator.GREATER_THAN)
         return MathRelation(first, second, MathOperator.GREATER_THAN)
+
+    def before_proposition(self, first, quantification, second):
+        if quantification:
+            return MathRelation(MathRelation(first, Value(quantification.concept_id, quantification.cardinality),
+                                             MathOperator.SUM), second, MathOperator.LESS_THAN)
+        return MathRelation(first, second, MathOperator.LESS_THAN)
 
     def match_proposition(self, first, negation, second):
         if negation:
