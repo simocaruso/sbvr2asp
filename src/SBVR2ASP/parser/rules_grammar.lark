@@ -42,9 +42,10 @@ proposition_expression: modal_operator proposition_expression                   
                       | proposition_expression [negation] verb proposition_expression         -> simple_proposition
                       | proposition_expression "is " [negation] proposition_expression        -> match_proposition
 
-concept: concept "of " "the "? concept ["and " concept]  -> concept_of
-       | concept "that " verb concept                    -> concept_that
-       | concept concept                                 -> concept_with_property
+concept: concept "of " "the "? concept ["and " concept]   -> concept_of
+       | concept "that " verb concept                     -> concept_that
+       | concept "that is " concept                       -> concept_that_is
+       | concept concept                                  -> concept_with_property
        | _ARTICLE? [quantification] concept_name [INT] " "?
 
 negation: "not " | "does not " | "do not "

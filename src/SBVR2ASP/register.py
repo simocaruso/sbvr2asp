@@ -31,7 +31,7 @@ class Register:
         return self._properties
 
     def _clear_name(self, name: str) -> str:
-        return name.replace(' ', '_').replace('/', '_').replace('-', '_')
+        return name.replace(' ', '_').replace('/', '_').replace('-', '_').replace('.', '_')
 
     def get_concept_id(self, concept_name: str) -> str | None:
         if concept_name not in self._name_to_id:

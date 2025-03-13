@@ -21,7 +21,7 @@ It is obligatory that the country of the return branch of each international inw
 It is necessary that if a rental is open and the rental is not an international inward rental then the rented car of the rental is owned by the local area of the pick-up branch of the rental.
 If the actual return date/time of a rental is after the end date/time of the grace period of the rental then it is obligatory that the rental incurs a late return charge.
 If the drop-off location of a rental is not the EU-Rent site that is base for the return branch of the rental then it is obligatory that the rental incurs a location penalty charge.
-// If a rental is assigned then it is obligatory that the rented car of the rental is stored at the pick-up branch of the rental. -- How to handle "assigned"?
+// If a rental is assigned then it is obligatory that the rented car of the rental is stored at the pick-up branch of the rental. --  "assigned"?
 At the actual start date/time of each rental it is obligatory that the fuel level of the rented car of the rental is full.
 
 // Points Rental Rules
@@ -41,4 +41,4 @@ If the rented car of an open rental is in need of service or is in need of repai
 // Transfer Rules
 At the transfer drop-off date/time of a car transfer it is obligatory that the transferred car of the car transfer is owned by the local area that includes the transfer drop-off branch of the car transfer.
 It is obligatory that the country of the transfer drop-off branch of an international return is the country of registration of the transferred car of the international return.
-// At the drop-off date/time of an international return it is obligatory that the transferred car of the international return is owned by the local area that includes the transfer drop-off branch of the international return. -- drop-off date/time is not defined
+// At the drop-off date/time of an international return it is obligatory that the transferred car of the international return is owned by the local area that includes the transfer drop-off branch of the international return. -- drop-off date/time is not defined, ("transfer drop-off date/time")

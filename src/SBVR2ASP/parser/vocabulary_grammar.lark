@@ -9,8 +9,15 @@ value: name ": name"
           | name " establishes " name
           | name " owns " name
           | name " overlap " name
+          | name " contains " name
           | name " is included in " name
           | name " is owned by " name
+          | name " is taken by " name
+          | name " received in " name
+          | name " received for " name
+          | name " received by " name
+          | name " is given by " name
+          | name " is rating of " name
           | name " is base for " name
           | name " is stored at " name
           | name " is responsible for " name
@@ -23,6 +30,7 @@ value: name ": name"
 definition: "Definition: " name
 ?name: WORD
       | name " " name -> spaced_name
+      | name ". " name -> dot_name
       | name "-" name -> dashed_name
       | name "/" name -> slashed_name
 

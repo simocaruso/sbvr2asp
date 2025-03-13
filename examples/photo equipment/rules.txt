@@ -1,0 +1,28 @@
+It is impossible that digital sensor is photographic film.
+It is impossible that electronics product is creative product.
+It is impossible that electronics product is other product.
+It is necessary that rating is given by exactly 1 agent.
+// It is necessary that rating is rating of exactly 1 product. -- ambiguous
+It is impossible that digital photo camera is film photo camera.
+It is necessary that photo camera has at most 1 camera model.
+It is necessary that photo camera contains exactly 1 lens.
+It is necessary that photo camera contains exactly 1 photo element.
+It is necessary that photo camera contains exactly 1 flash.
+It is necessary that photo camera contains at most 2 memory card.
+It is necessary that photo camera contains at least 1 memory card.
+It is necessary that photo camera contains exactly 2 battery.
+It is necessary that photo is taken by at most 1 photo camera.
+It is impossible that digital photo camera is film photo camera.
+It is necessary that award received in at most 1 photo exhibition.
+It is necessary that award received for at least 1 photo.
+It is necessary that award received by at most 1 photographer.
+It is impossible that Jim is John.
+It is necessary that G. Gudas is Gytis Gudas.
+It is impossible that person is organization.
+It is impossible that commercial organization is other organization.
+It is necessary that photo camera contains at most 3 memory card.
+It is necessary that photo camera contains at least 1 memory card.
+It is necessary that digital photo camera has at least 2 shooting mode.
+It is necessary that photo camera contains at most 2 memory card slot.
+It is necessary that photo camera has at least 2 and at most 9 white balance preset.
+It is necessary that digital photo camera contains photo element that is digital sensor.

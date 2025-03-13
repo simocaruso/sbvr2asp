@@ -29,6 +29,9 @@ class VocabularyTransformer(Transformer):
     def spaced_name(self, first, second):
         return f"{first} {second}"
 
+    def dot_name(self, first, second):
+        return f"{first}. {second}"
+
     def dashed_name(self, first, second):
         return f"{first}-{second}"
 

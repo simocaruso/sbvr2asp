@@ -51,11 +51,17 @@ class RulesTransformer(Transformer):
     def exactly_one_quantification(self):
         return ExactCardinality(1)
 
+    def exactly_n_quantification(self, n):
+        return ExactCardinality(n)
+
     def at_least_n_quantification(self, n):
-        return Cardinality(n, 0)
+        return Cardinality(n, None)
 
     def at_most_n_quantification(self, n):
-        return Cardinality(0, n)
+        return Cardinality(None, n)
+
+    def numeric_range_quantification(self, lower_bound, upper_bound):
+        return Cardinality(lower_bound, upper_bound)
 
     def modal_proposition(self, modal_operator, proposition_expression):
         if modal_operator == POSITIVE:
@@ -111,6 +117,9 @@ class RulesTransformer(Transformer):
 
     def concept_that(self, first, verb, second):
         return Relation(first, second)
+
+    def concept_that_is(self, first, second):
+        return Conjunction(first, MathRelation(first, second, MathOperator.EQUAL))
 
     def concept_with_property(self, first, second):
         property = self._register.get_relation(first.concept_id, second.concept_id)

@@ -1,0 +1,40 @@
+digital sensor
+photographic film
+electronics product
+creative product
+other product
+rating
+agent
+product
+rating is given by agent
+rating is rating of product
+
+photo camera
+digital photo camera
+Definition: photo camera
+film photo camera
+Definition: photo camera
+
+photo camera has camera model
+lens
+photo camera contains lens
+photo element
+photo camera contains photo element
+photo camera contains flash
+photo camera contains memory card
+photo camera contains battery
+photo is taken by photo camera
+award received in photo exhibition
+award received for photo
+award received by photographer
+Jim
+John
+person
+organization
+commercial organization
+digital photo camera has shooting mode
+photo camera contains memory card slot
+photo camera has white balance preset
+other organization
+G. Gudas
+Gytis Gudas

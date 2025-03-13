@@ -283,7 +283,7 @@ class TestRules(unittest.TestCase):
                     ''')
         self.assertEqual(self._process(rules), dedent('''\
                             :- renter(REN), club_member(CLUMEM), REN != CLUMEM, points_rental(POIREN), has(points_rental(POIREN),renter(REN)).
-                            :- booking_date_time(BOODATTIM), scheduled_start_date_time(SCHSTADATTIM), BOODATTIM+5 <= SCHSTADATTIM, points_rental(POIREN), has(points_rental(POIREN),booking_date_time(BOODATTIM)), points_rental(POIREN), has(points_rental(POIREN),scheduled_start_date_time(SCHSTADATTIM)).
+                            :- booking_date_time(BOODATTIM), scheduled_start_date_time(SCHSTADATTIM), BOODATTIM+5 >= SCHSTADATTIM, points_rental(POIREN), has(points_rental(POIREN),booking_date_time(BOODATTIM)), points_rental(POIREN), has(points_rental(POIREN),scheduled_start_date_time(SCHSTADATTIM)).
                             ''').strip())
 
     def test_transfer_rules(self):

@@ -37,20 +37,6 @@ def add_properties_to_grammar(lark: LarkWrapper, register: Register):
 def process_rules(rules: str, register: Register) -> list[Node]:
     rules = replace_concept_name(register.get_register(), rules)
     lark = LarkWrapper(Grammar.RULES)
-    '''
-    !verb: "has "
-    | "includes "
-    | "establishes "
-    | "owns "
-    | "is owned by "
-    | "incurs "
-    | "is base for "
-    | "is stored at "
-    | "is provisionally charged to "
-    | "is responsible for "
-    | "is calculated in "
-    | "honors "
-    '''
     add_properties_to_grammar(lark, register)
     tree = lark.parse(rules)
     propositions = RulesTransformer(register).transform(tree)
