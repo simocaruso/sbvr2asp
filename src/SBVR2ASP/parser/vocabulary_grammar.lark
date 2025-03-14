@@ -8,10 +8,15 @@ value: name ": name"
           | name " includes " name
           | name " establishes " name
           | name " owns " name
+          | name " own " name
+          | name " is owned by " name
           | name " overlap " name
           | name " contains " name
           | name " is included in " name
           | name " is owned by " name
+          | name " is contained in " name
+          | name " is got by " name
+          | name " is given by " name
           | name " is taken by " name
           | name " received in " name
           | name " received for " name

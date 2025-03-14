@@ -1,0 +1,6 @@
+loan is got by debtor
+loan own bail
+account is contained in bank
+person own account
+loan is given by bank
+real estate is owned by owner

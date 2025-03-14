@@ -1,0 +1,7 @@
+It is necessary that loan is got by exactly 1 debtor.
+It is necessary that loan own exactly 1 bail.
+It is necessary that account is contained in exactly 1 bank.
+It is necessary that person own at least 1 account.
+It is necessary that person own at most 5 account.
+It is necessary that loan is given by exactly 1 bank.
+It is necessary that real estate is owned by exactly 1 owner.
