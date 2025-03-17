@@ -1,3 +1,4 @@
+from enum import Enum
 from multiprocessing.resource_tracker import register
 from typing import Any
 
@@ -7,6 +8,7 @@ from lark import Transformer, v_args
 from SBVR2ASP.asp.math import MathOperator
 from SBVR2ASP.data_structure.cardinality import ExactCardinality, Cardinality
 from SBVR2ASP.data_structure.concept import Concept
+from SBVR2ASP.data_structure.constant import Constant
 from SBVR2ASP.data_structure.node import Node
 from SBVR2ASP.data_structure.relation import Relation, MathRelation, SwappedLeftMostToRightMostRelation, \
     Disjunction, Conjunction, Implication
@@ -15,6 +17,11 @@ from SBVR2ASP.register import Register
 
 NEGATIVE = True
 POSITIVE = False
+
+
+class TemporalValue(Enum):
+    FUTURE = 0,
+    PAST = 1
 
 
 @v_args(inline=True)
@@ -106,6 +113,17 @@ class RulesTransformer(Transformer):
 
     def at_proposition(self, first, second):
         return Conjunction(first, second)
+
+    def temporal_proposition(self, first, second):
+        operator = MathOperator.LESS_THAN
+        if second == TemporalValue.FUTURE:
+            operator = MathOperator.GREATER_THAN
+        return MathRelation(first, Constant("now"), operator)
+
+    def temporal_value(self, value):
+        if value == "in the future":
+            return TemporalValue.FUTURE
+        return TemporalValue.PAST
 
     def concept_proposition(self, concept):
         return concept

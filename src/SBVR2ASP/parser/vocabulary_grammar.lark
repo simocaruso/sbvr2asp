@@ -15,6 +15,9 @@ value: name ": name"
           | name " is included in " name
           | name " is owned by " name
           | name " is contained in " name
+          | name " requests " name
+          | name " is converted to " name
+          | name " is stored at " name
           | name " is got by " name
           | name " is given by " name
           | name " is taken by " name

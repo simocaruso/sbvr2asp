@@ -110,10 +110,9 @@ class Register:
             # substitute the property right element with its subclass elements
             for subclass in self._subclasses[concepts[1]]:
                 new_entries[(concepts[0], subclass)] = property_name
-            # if left and right are equal copy the property for each subclass
-            if concepts[0] == concepts[1]:
-                for subclass in self._subclasses[concepts[0]]:
-                    new_entries[(subclass, subclass)] = property_name
+            for left_subclass in self._subclasses[concepts[0]]:
+                for right_subclass in self._subclasses[concepts[1]]:
+                    new_entries[(left_subclass, right_subclass)] = property_name
         self._properties.update(new_entries)
 
     def is_value(self, name):

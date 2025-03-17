@@ -152,6 +152,8 @@ car transfer has transferred car
 points rental
 Definition: rental
 
+rental is assigned
+
 club member
 Definition: renter
 start date/time
@@ -172,3 +174,12 @@ days
 scheduled start date/time
 rental has scheduled start date/time
 rental has booking date/time
+renter requests price conversion
+price conversion has currency
+rental charge is converted to currency
+
+rental has pick-up branch
+rental car is stored at branch
+rental has start date
+reserved rental
+Definition: rental
