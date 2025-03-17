@@ -198,7 +198,7 @@ Definition: rental
 ''')
 
 
-class TestRules(unittest.TestCase):
+class TestCarRentalRules(unittest.TestCase):
     def _process(self, rules):
         register = Register()
         process_vocabulary(VOCABULARY, register)

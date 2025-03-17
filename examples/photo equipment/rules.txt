@@ -2,7 +2,7 @@ It is impossible that digital sensor is photographic film.
 It is impossible that electronics product is creative product.
 It is impossible that electronics product is other product.
 It is necessary that rating is given by exactly 1 agent.
-// It is necessary that rating is rating of exactly 1 product. -- ambiguous
+It is necessary that rating is rating of exactly 1 product.
 It is impossible that digital photo camera is film photo camera.
 It is necessary that photo camera has at most 1 camera model.
 It is necessary that photo camera contains exactly 1 lens.

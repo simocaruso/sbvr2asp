@@ -1,3 +1,4 @@
+import uuid
 from argparse import ArgumentParser
 from textwrap import indent
 
@@ -10,11 +11,19 @@ from SBVR2ASP.transformers.vocabulary import VocabularyTransformer
 from SBVR2ASP.parser.lark_wrapper import LarkWrapper, Grammar
 
 
-def replace_concept_name(register: dict, text: str) -> str:
-    concept_names = list(register.keys())
+def replace_concept_name(name_to_id: dict, properties: list[str], text: str) -> str:
+    properties = set(properties)
+    concept_names = list(name_to_id.keys()) + list(properties)
     concept_names.sort(key=len, reverse=True)
+    tmp = {}
     for concept_name in concept_names:
-        text = text.replace(concept_name, register[concept_name] + '#')
+        if concept_name in properties:
+            tmp[concept_name] = uuid.uuid4().hex
+            text = text.replace(concept_name, tmp[concept_name])
+        else:
+            text = text.replace(concept_name, name_to_id[concept_name] + '#')
+    for id, value in tmp.items():
+        text = text.replace(value, id)
     return text
 
 
@@ -22,6 +31,7 @@ def process_vocabulary(vocabulary: str, register: Register):
     lark = LarkWrapper(Grammar.VOCABULARY)
     tree = lark.parse(vocabulary)
     VocabularyTransformer(register).transform(tree)
+
 
 def add_properties_to_grammar(lark: LarkWrapper, register: Register):
     added = {'is'}  # "is" should not be included and is handled in the grammar
@@ -34,8 +44,9 @@ def add_properties_to_grammar(lark: LarkWrapper, register: Register):
     res = f'!verb: {indent(res, " " * len("!verb")).strip()}\n'
     lark.extend_grammar(res)
 
+
 def process_rules(rules: str, register: Register) -> list[Node]:
-    rules = replace_concept_name(register.get_register(), rules)
+    rules = replace_concept_name(register.get_register(), register.get_properties().values(), rules)
     lark = LarkWrapper(Grammar.RULES)
     add_properties_to_grammar(lark, register)
     tree = lark.parse(rules)
