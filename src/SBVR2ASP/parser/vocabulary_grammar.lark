@@ -3,7 +3,7 @@
 
 start: ((concept | property | value) _NEWLINE)+
 concept: name [_NEWLINE definition]
-value: name ": name"
+value: name _NEWLINE "Concept type: individual concept"
 !property.1: name " has " name
           | name " includes " name
           | name " establishes " name
@@ -35,7 +35,7 @@ value: name ": name"
           | name " is " name
           | name " honors " name
 
-definition: "Definition: " name
+definition: "General Concept: " name
 ?name: WORD
       | name " " name -> spaced_name
       | name ". " name -> dot_name

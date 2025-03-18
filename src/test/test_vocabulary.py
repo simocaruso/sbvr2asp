@@ -12,7 +12,7 @@ class TestVocabulary(unittest.TestCase):
         text = ('car movement\n'
                 'car movement has receiving branch\n'
                 'one-way car movement\n'
-                'Definition: car movement\n')
+                'General Concept: car movement\n')
         tree = LarkWrapper(Grammar.VOCABULARY).parse(text)
         register = Register()
         VocabularyTransformer(register).transform(tree)

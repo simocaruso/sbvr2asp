@@ -11,9 +11,9 @@ rating is rating of product
 
 photo camera
 digital photo camera
-Definition: photo camera
+General Concept: photo camera
 film photo camera
-Definition: photo camera
+General Concept: photo camera
 
 photo camera has camera model
 lens

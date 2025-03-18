@@ -14,7 +14,7 @@ rental
 requested car group
 period
 rental period
-Definition: period
+General Concept: period
 
 period overlap period
 
@@ -26,7 +26,7 @@ actual return date/time
 rental organization unit
 
 branch
-Definition: rental organization unit
+General Concept: rental organization unit
 
 rental booking has booking date/time
 rental booking establishes advance rental
@@ -44,37 +44,37 @@ local area
 rental car
 
 return branch
-Definition: branch
+General Concept: branch
 
 in-country rental
-Definition: rental
+General Concept: rental
 
 car movement being round-trip
-Definition: car movement
+General Concept: car movement
 
 one-way car movement
-Definition: car movement
+General Concept: car movement
 
 one-way rental
-Definition: rental
+General Concept: rental
 
 international rental
-Definition: one-way rental
+General Concept: one-way rental
 
 international inward rental
-Definition: international rental
+General Concept: international rental
 
 pick-up branch
-Definition: branch
+General Concept: branch
 
 rented car
-Definition: rental car
+General Concept: rental car
 
 country
 grace period
 late return charge
 country of registration
-Definition: country
+General Concept: country
 rented car
 branch has country
 international inward rental has return branch
@@ -103,11 +103,11 @@ rental car is stored at branch
 
 rental charge
 estimated rental charge
-Definition: rental charge
+General Concept: rental charge
 card
 
 credit card
-Definition: card
+General Concept: card
 business currency
 driver
 rental has rental charge
@@ -120,20 +120,20 @@ renter is responsible for rental
 rental has business currency
 
 cash rental
-Definition: rental
+General Concept: rental
 
 cash rental price
-Definition: base rental price
+General Concept: base rental price
 
 lowest rental price
-Definition: cash rental price
+General Concept: cash rental price
 
 cash rental honors lowest rental price
 cash rental has base rental price
 
 driver
 primary driver
-Definition: driver
+General Concept: driver
 rental has primary driver
 driver is barred
 driver is qualified
@@ -149,39 +149,41 @@ rental incurs car exchange during rental
 
 car transfer
 transfer drop-off branch
-Definition: branch
+General Concept: branch
 transfer drop-off date/time
 transferred car
-Definition: rental car
+General Concept: rental car
 rental car is owned by local area
 local area includes branch
 international return
-Definition: car transfer
+General Concept: car transfer
 car transfer has transfer drop-off branch
 car transfer has transfer drop-off date/time
 car transfer has transferred car
 
 points rental
-Definition: rental
+General Concept: rental
 
 rental is assigned
 
 club member
-Definition: renter
+General Concept: renter
 start date/time
 actual start date/time
-Definition: start date/time
+General Concept: start date/time
 rental has start date/time
 rental car has fuel level
 
-full: name
-miles: name
-
+full
+Concept type: individual concept
+miles
+Concept type: individual concept
 rental car has service reading
 rental has rental duration
 service reading
 rental duration
-rental days: name
+rental days
+Concept type: individual concept
 days
 scheduled start date/time
 rental has scheduled start date/time
@@ -194,7 +196,7 @@ rental has pick-up branch
 rental car is stored at branch
 rental has start date
 reserved rental
-Definition: rental
+General Concept: rental
 ''')
 
 
