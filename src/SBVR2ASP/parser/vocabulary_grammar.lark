@@ -2,42 +2,12 @@
 %import common.NEWLINE
 
 start: ((concept | property | value) _NEWLINE)+
-concept: name [_NEWLINE definition]
-value: name _NEWLINE "Concept type: individual concept"
-!property.1: name " has " name
-          | name " includes " name
-          | name " establishes " name
-          | name " owns " name
-          | name " own " name
-          | name " is owned by " name
-          | name " overlap " name
-          | name " contains " name
-          | name " is included in " name
-          | name " is owned by " name
-          | name " is contained in " name
-          | name " requests " name
-          | name " is converted to " name
-          | name " is stored at " name
-          | name " is got by " name
-          | name " is given by " name
-          | name " is taken by " name
-          | name " received in " name
-          | name " received for " name
-          | name " received by " name
-          | name " is given by " name
-          | name " is rating of " name
-          | name " is base for " name
-          | name " is stored at " name
-          | name " is responsible for " name
-          | name " is provisionally charged to " name
-          | name " is calculated in " name
-          | name " incurs " name
-          | name " is " name
-          | name " honors " name
-
-definition: "General Concept: " name
+concept: concept_name _NEWLINE definition
+value: concept_name _NEWLINE "Concept type: individual concept"
+property: name (" " name)*
+concept_name: name (" " name)*
+definition: "General Concept: " concept_name
 ?name: WORD
-      | name " " name -> spaced_name
       | name ". " name -> dot_name
       | name "-" name -> dashed_name
       | name "/" name -> slashed_name

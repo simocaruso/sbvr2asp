@@ -10,6 +10,7 @@ from SBVR2ASP.transformers.vocabulary import VocabularyTransformer
 class TestVocabulary(unittest.TestCase):
     def test_vocabulary(self):
         text = ('car movement\n'
+                'receiving branch\n'
                 'car movement has receiving branch\n'
                 'one-way car movement\n'
                 'General Concept: car movement\n')

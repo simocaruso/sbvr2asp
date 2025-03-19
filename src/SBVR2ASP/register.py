@@ -60,6 +60,8 @@ class Register:
             self.add_concept(first)
         if second not in self._name_to_id:
             self.add_concept(second)
+        if (self.get_concept_id(first), self.get_concept_id(second)) in self._properties and self._properties[(self.get_concept_id(first), self.get_concept_id(second))] != property_name:
+            print(f"Error overriding property {property_name} in concept {first} and concept {second}")
         self._properties[(self.get_concept_id(first), self.get_concept_id(second))] = property_name
 
     def get_atom(self, concept_id: str) -> Atom:
@@ -106,13 +108,16 @@ class Register:
         for concepts, property_name in self._properties.items():
             # substitute the property left element with its subclass elements
             for subclass in self._subclasses[concepts[0]]:
-                new_entries[(subclass, concepts[1])] = property_name
+                if not self.get_relation(subclass, concepts[1]):
+                    new_entries[(subclass, concepts[1])] = property_name
             # substitute the property right element with its subclass elements
             for subclass in self._subclasses[concepts[1]]:
-                new_entries[(concepts[0], subclass)] = property_name
+                if not self.get_relation(concepts[0], subclass):
+                    new_entries[(concepts[0], subclass)] = property_name
             for left_subclass in self._subclasses[concepts[0]]:
                 for right_subclass in self._subclasses[concepts[1]]:
-                    new_entries[(left_subclass, right_subclass)] = property_name
+                    if not self.get_relation(left_subclass, right_subclass):
+                        new_entries[(left_subclass, right_subclass)] = property_name
         self._properties.update(new_entries)
 
     def is_value(self, name):

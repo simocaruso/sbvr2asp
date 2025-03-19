@@ -32,6 +32,8 @@ rental booking has booking date/time
 rental booking establishes advance rental
 rental includes rental period
 rental has requested car group
+return branch
+General Concept: branch
 rental has return branch
 rental has scheduled pick-up date/time
 
@@ -39,13 +41,8 @@ advance rental includes rental period
 advance rental has requested car group
 advance rental has return branch
 advance rental has scheduled pick-up date/time
-
 local area
 rental car
-
-return branch
-General Concept: branch
-
 in-country rental
 General Concept: rental
 
@@ -84,10 +81,12 @@ rental has actual return date/time
 local area owns rental car
 local area includes branch
 branch is included in local area
+open
 rental is open
 rented car is owned by local area
 rental has pick-up branch
 rental has grace period
+end date/time
 grace period has end date/time
 rental incurs late return charge
 
@@ -108,11 +107,12 @@ card
 
 credit card
 General Concept: card
+currency
 business currency
 driver
 rental has rental charge
 rental charge is calculated in business currency
-
+renter
 estimated rental charge is provisionally charged to card
 renter has credit card
 rental has driver
@@ -121,7 +121,7 @@ rental has business currency
 
 cash rental
 General Concept: rental
-
+base rental price
 cash rental price
 General Concept: base rental price
 
@@ -135,16 +135,20 @@ driver
 primary driver
 General Concept: driver
 rental has primary driver
+barred
+qualified
 driver is barred
 driver is qualified
 
 rental has renter
 
-need of service
+in need of service
+in need of repair
 scheduled service
 rental car is in need of service
 rental car is in need of repair
 rental car has scheduled service
+car exchange during rental
 rental incurs car exchange during rental
 
 car transfer
@@ -163,7 +167,7 @@ car transfer has transferred car
 
 points rental
 General Concept: rental
-
+assigned
 rental is assigned
 
 club member
@@ -172,28 +176,33 @@ start date/time
 actual start date/time
 General Concept: start date/time
 rental has start date/time
+fuel level
 rental car has fuel level
 
 full
 Concept type: individual concept
 miles
 Concept type: individual concept
-rental car has service reading
-rental has rental duration
+
 service reading
 rental duration
+rental car has service reading
+rental has rental duration
 rental days
 Concept type: individual concept
+
 days
 scheduled start date/time
 rental has scheduled start date/time
 rental has booking date/time
+price conversion
 renter requests price conversion
 price conversion has currency
 rental charge is converted to currency
 
 rental has pick-up branch
 rental car is stored at branch
+start date
 rental has start date
 reserved rental
 General Concept: rental
@@ -202,6 +211,7 @@ General Concept: rental
 
 class TestCarRentalRules(unittest.TestCase):
     def _process(self, rules):
+        self.maxDiff = None
         register = Register()
         process_vocabulary(VOCABULARY, register)
         res = process_rules(rules, register)

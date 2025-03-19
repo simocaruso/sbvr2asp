@@ -1,15 +1,18 @@
 import unittest
 from textwrap import dedent
 
-from SBVR2ASP.data_structure.cardinality import ExactCardinality
-from SBVR2ASP.data_structure.concept import Concept
-from SBVR2ASP.parser.lark_wrapper import LarkWrapper, Grammar
 from SBVR2ASP.register import Register
-from SBVR2ASP.sbvr2asp import replace_concept_name, process_vocabulary, process_rules
-from SBVR2ASP.transformers.rules import RulesTransformer
-from SBVR2ASP.transformers.vocabulary import VocabularyTransformer
+from SBVR2ASP.sbvr2asp import process_vocabulary, process_rules
 
 VOCABULARY = dedent('''\
+loan
+debtor
+bail
+account
+bank
+owner
+real estate
+person
 loan is got by debtor
 loan own bail
 account is contained in bank
