@@ -130,7 +130,8 @@ driver is qualified
 
 rental has renter
 
-need of service
+in need of service
+in need of repair
 scheduled service
 rental car is in need of service
 rental car is in need of repair
@@ -163,6 +164,7 @@ start date/time
 actual start date/time
 General Concept: start date/time
 rental has start date/time
+fuel level
 rental car has fuel level
 
 full

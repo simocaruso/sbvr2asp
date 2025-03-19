@@ -15,25 +15,37 @@ General Concept: photo camera
 film photo camera
 General Concept: photo camera
 
+camera model
 photo camera has camera model
 lens
 photo camera contains lens
 photo element
 photo camera contains photo element
+flash
 photo camera contains flash
+memory card
+battery
 photo camera contains memory card
 photo camera contains battery
+photo
 photo is taken by photo camera
+award
+photo exhibition
 award received in photo exhibition
+photo
 award received for photo
+photographer
 award received by photographer
 Jim
 John
 person
 organization
 commercial organization
+shooting mode
 digital photo camera has shooting mode
+memory card slot
 photo camera contains memory card slot
+white balance preset
 photo camera has white balance preset
 other organization
 G. Gudas

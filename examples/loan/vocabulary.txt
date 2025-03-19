@@ -1,3 +1,11 @@
+loan
+debtor
+bail
+account
+bank
+owner
+real estate
+person
 loan is got by debtor
 loan own bail
 account is contained in bank
