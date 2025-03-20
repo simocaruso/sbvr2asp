@@ -151,6 +151,8 @@ class Conjunction(Node):
 
     def reshape(self, tree: list[Node], queue: list[Node]):
         tree = self.left.reshape(tree, queue)
+        if self.negated:
+            self.right.negated = not self.right.negated
         tree = self.right.reshape(tree, queue)
         return tree
 
@@ -161,6 +163,4 @@ class Implication(Conjunction):
     """
 
     def reshape(self, tree: list[Node], queue: list[Node]):
-        if self.negated:
-            self.right.negated = not self.right.negated  # A -> B == not (A and not B)
         return super().reshape(tree, queue)

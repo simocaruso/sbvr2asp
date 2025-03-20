@@ -11,7 +11,7 @@ class Register:
         self._name_to_id = {}  # concept name, mapped id
         self._id_to_name = {}
         self._properties = {}  # tuple of entities
-        self._values = {}      # used to track values
+        self._values = {}  # used to track values
         self._subclasses = defaultdict(list)  # list of subclasses of a concept
 
     def _generate_id(self) -> str:
@@ -80,7 +80,6 @@ class Register:
         else:
             relation.terms[f'{atom.predicate}_1'] = atom
 
-
     def add_subclass(self, concept: str, superclass: str):
         self._subclasses[self.get_concept_id(superclass)].append(self.get_concept_id(concept))
 
@@ -106,13 +105,16 @@ class Register:
         for concepts, property_name in self._properties.items():
             # substitute the property left element with its subclass elements
             for subclass in self._subclasses[concepts[0]]:
-                new_entries[(subclass, concepts[1])] = property_name
+                if not self.get_relation(subclass, concepts[1]):
+                    new_entries[(subclass, concepts[1])] = property_name
             # substitute the property right element with its subclass elements
             for subclass in self._subclasses[concepts[1]]:
-                new_entries[(concepts[0], subclass)] = property_name
+                if not self.get_relation(concepts[0], subclass):
+                    new_entries[(concepts[0], subclass)] = property_name
             for left_subclass in self._subclasses[concepts[0]]:
                 for right_subclass in self._subclasses[concepts[1]]:
-                    new_entries[(left_subclass, right_subclass)] = property_name
+                    if not self.get_relation(left_subclass, right_subclass):
+                        new_entries[(left_subclass, right_subclass)] = property_name
         self._properties.update(new_entries)
 
     def is_value(self, name):

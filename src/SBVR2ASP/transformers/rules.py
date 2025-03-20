@@ -43,11 +43,20 @@ class RulesTransformer(Transformer):
         proposition_expression.substitute = self._substitute
         return proposition_expression
 
+    def obligation_formulation(self):
+        return POSITIVE
+
+    def obligation_formulation_embedding_logical_negation(self):
+        return NEGATIVE
+
     def necessity_formulation(self):
         return POSITIVE
 
-    def obligation_formulation(self):
+    def necessity_formulation_embedding_logical_negation(self):
         return NEGATIVE
+
+    def possibility_formulation(self):
+        return POSITIVE
 
     def permissibility_formulation(self):
         return POSITIVE
@@ -55,20 +64,32 @@ class RulesTransformer(Transformer):
     def universal_quantification(self):
         return None
 
+    def existential_quantification(self):
+        return Cardinality(1, None)
+
+    def at_least_n_quantification(self, n):
+        return Cardinality(n, None)
+
+    def at_most_one_quantification(self):
+        return Cardinality(None, 1)
+
+    def at_most_n_quantification(self, n):
+        return Cardinality(None, n)
+
     def exactly_one_quantification(self):
         return ExactCardinality(1)
 
     def exactly_n_quantification(self, n):
         return ExactCardinality(n)
 
-    def at_least_n_quantification(self, n):
-        return Cardinality(n, None)
-
-    def at_most_n_quantification(self, n):
-        return Cardinality(None, n)
-
     def numeric_range_quantification(self, lower_bound, upper_bound):
         return Cardinality(lower_bound, upper_bound)
+
+    def at_least_n_quantification_with_n_2(self):
+        return Cardinality(2, None)
+
+    def logical_negation(self):
+        return ExactCardinality(0)
 
     def modal_proposition(self, modal_operator, proposition_expression):
         if modal_operator == POSITIVE:
