@@ -20,8 +20,6 @@ It is impossible that Jim is John.
 It is necessary that G. Gudas is Gytis Gudas.
 It is impossible that person is organization.
 It is impossible that commercial organization is other organization.
-It is necessary that photo camera contains at most 3 memory card.
-It is necessary that photo camera contains at least 1 memory card.
 It is necessary that digital photo camera has at least 2 shooting mode.
 It is necessary that photo camera contains at most 2 memory card slot.
 It is necessary that photo camera has at least 2 and at most 9 white balance preset.

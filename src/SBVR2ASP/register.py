@@ -47,7 +47,7 @@ class Register:
         if not (first_id, second_id) in self._properties:
             return None
         return self._create_atom(self._properties[first_id, second_id],
-                                 [self._id_to_name[first_id], self._id_to_name[second_id]])
+                                 [self._id_to_name[first_id].lower(), self._id_to_name[second_id].lower()])
 
     def add_concept(self, concept_name: str):
         if concept_name not in self._name_to_id:
@@ -65,7 +65,7 @@ class Register:
     def get_atom(self, concept_id: str) -> Atom:
         if concept_id not in self._id_to_name:
             raise KeyError(f'Concept {concept_id} not registered')
-        return self._create_atom(self._id_to_name[concept_id], ['id'])
+        return self._create_atom(self._id_to_name[concept_id].lower(), ['id'])
 
     def _create_atom(self, predicate: str, term_names: list[str]) -> Atom:
         terms = {}
