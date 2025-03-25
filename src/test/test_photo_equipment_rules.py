@@ -109,8 +109,8 @@ class TestCarRentalRules(unittest.TestCase):
                             :- award(AWA), #count{photo_exhibition(PHOEXH): received_in(award(AWA),photo_exhibition(PHOEXH))} > 1.
                             :- award(AWA), #count{photo(PHO): received_for(award(AWA),photo(PHO))} < 1.
                             :- award(AWA), #count{photographer(PHO): received_by(award(AWA),photographer(PHO))} > 1.
-                            :- Jim(JIM), John(JOH), JIM = JOH.
-                            :- G__Gudas(GGUD), Gytis_Gudas(GYTGUD), GGUD != GYTGUD.
+                            :- jim(JIM), john(JOH), JIM = JOH.
+                            :- g__gudas(GGUD), gytis_gudas(GYTGUD), GGUD != GYTGUD.
                             :- person(PER), organization(ORG), PER = ORG.
                             :- commercial_organization(COMORG), other_organization(OTHORG), COMORG = OTHORG.
                             :- photo_camera(PHOCAM), #count{memory_card(MEMCAR): contains(photo_camera(PHOCAM),memory_card(MEMCAR))} > 3.
