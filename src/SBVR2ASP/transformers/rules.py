@@ -15,8 +15,10 @@ from SBVR2ASP.data_structure.relation import Relation, MathRelation, SwappedLeft
 from SBVR2ASP.data_structure.value import Value
 from SBVR2ASP.register import Register
 
-NEGATIVE = True
-POSITIVE = False
+# Rule Type
+NEGATIVE = 0,
+POSITIVE = 1,
+WEAK = 2
 
 
 class TemporalValue(Enum):
@@ -28,7 +30,6 @@ class TemporalValue(Enum):
 class RulesTransformer(Transformer):
     def __init__(self, register: Register):
         super().__init__()
-        self._substitute = None
         self._register = register
         self._visited_concepts = set()
 
@@ -40,26 +41,16 @@ class RulesTransformer(Transformer):
 
     def proposition(self, proposition_expression) -> Node:
         self._visited_concepts.clear()
-        proposition_expression.substitute = self._substitute
         return proposition_expression
 
-    def obligation_formulation(self):
+    def positive_modal_operator(self):
         return POSITIVE
 
-    def obligation_formulation_embedding_logical_negation(self):
+    def negative_modal_operator(self):
         return NEGATIVE
 
-    def necessity_formulation(self):
-        return POSITIVE
-
-    def necessity_formulation_embedding_logical_negation(self):
-        return NEGATIVE
-
-    def possibility_formulation(self):
-        return POSITIVE
-
-    def permissibility_formulation(self):
-        return POSITIVE
+    def weak_modal_operator(self):
+        return WEAK
 
     def universal_quantification(self):
         return None
@@ -94,7 +85,34 @@ class RulesTransformer(Transformer):
     def modal_proposition(self, modal_operator, proposition_expression):
         if modal_operator == POSITIVE:
             proposition_expression.negated = not proposition_expression.negated
+        elif modal_operator == WEAK:
+            proposition_expression.weak = True
         return proposition_expression
+
+    def modal_verb_proposition(self, p_exp_1, modal_verb, verb, p_exp_2):
+        res = Relation(p_exp_1, p_exp_2)
+        if modal_verb == POSITIVE:
+            res.negated = not res.negated
+        elif modal_verb == WEAK:
+            res.weak = True
+        return res
+
+    def exclusive_disjunction(self, p_exp_1, p_exp_2):
+        res = Conjunction(p_exp_1, p_exp_2)
+        res.negated = not res.negated
+        return res
+
+    def equivalence(self, p_exp_1, p_exp_2):
+        p_exp_2.negated = not p_exp_2.negated
+        return Conjunction(p_exp_1, p_exp_2)
+
+    def nand_formulation(self, p_exp_1, p_exp_2):
+        res = Conjunction(p_exp_1, p_exp_2)
+        res.negated = not res.negated
+        return res
+
+    def nor_formulation(self, p_exp_1, p_exp_2):
+        return Disjunction(p_exp_1, p_exp_2)
 
     def simple_proposition(self, subj, verb_negation, verb, obj):
         res = Relation(subj, obj)
@@ -141,6 +159,19 @@ class RulesTransformer(Transformer):
             operator = MathOperator.GREATER_THAN
         return MathRelation(first, Constant("now"), operator)
 
+    def modal_verb(self, verb):
+        modal = {
+            "must": POSITIVE,
+            "always": POSITIVE,
+            "must not": NEGATIVE,
+            "need not": NEGATIVE,
+            "always": POSITIVE,
+            "never": NEGATIVE,
+            "can": WEAK,
+            "may": WEAK
+        }
+        return modal[verb.strip().lower()]
+
     def temporal_value(self, value):
         if value == "in the future":
             return TemporalValue.FUTURE
@@ -157,7 +188,10 @@ class RulesTransformer(Transformer):
     def concept_that(self, first, verb, second):
         return Relation(first, second)
 
-    def concept_that_is(self, first, second):
+    def concept_that_is(self, first, negation, second):
+        if negation:
+            second.negated = not second.negated
+            return Relation(first, second)
         return Conjunction(first, MathRelation(first, second, MathOperator.EQUAL))
 
     def concept_with_property(self, first, second):

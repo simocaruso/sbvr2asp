@@ -12,12 +12,9 @@ start: proposition+
 
 proposition: proposition_expression "." NEWLINE
 
-modal_operator: "it is obligatory that "i -> obligation_formulation
-              | "it is prohibited that "i -> obligation_formulation_embedding_logical_negation
-              | "it is necessary that "i  -> necessity_formulation
-              | "it is impossible that "i -> necessity_formulation_embedding_logical_negation
-              | "it is possible that "i   -> possibility_formulation
-              | "it is permitted that "i  -> permissibility_formulation
+modal_operator: ("it is obligatory that "i | "it is necessary that "i | "it is permitted that "i)  -> positive_modal_operator
+              | ("it is prohibited that "i | "it is impossible that "i | "it is not the case that "i) -> negative_modal_operator
+              | ("it is possible that "i )  -> weak_modal_operator
 
 quantification: "each "                                 -> universal_quantification
               | "some " | "at least one "               -> existential_quantification
@@ -31,6 +28,11 @@ quantification: "each "                                 -> universal_quantificat
               | "no "                                   -> logical_negation
 
 proposition_expression: modal_operator proposition_expression                                   -> modal_proposition
+                      | proposition_expression modal_verb verb proposition_expression           -> modal_verb_proposition
+                      | proposition_expression "or " proposition_expression "but not both"      -> exclusive_disjunction
+                      | proposition_expression "if and only if " proposition_expression         -> equivalence
+                      | "not both " proposition_expression "and " proposition_expression        -> nand_formulation
+                      | "neither " proposition_expression "nor " proposition_expression         -> nor_formulation
                       | "if "i proposition_expression "then " proposition_expression            -> implication_proposition
                       | "at "i proposition_expression proposition_expression                    -> at_proposition
                       | proposition_expression "is " [concept] "after " proposition_expression  -> after_proposition
@@ -43,14 +45,24 @@ proposition_expression: modal_operator proposition_expression                   
                       | proposition_expression "is " temporal_value                             -> temporal_proposition
                       | proposition_expression "is " [negation] proposition_expression          -> match_proposition
 
+!modal_verb: "must "
+           | "always "
+           | "must not "
+           | "need not "
+           | "always "
+           | "never "
+           | "can "
+           | "may "
+
+
 !temporal_value: "in the future" | "in the past"
 
 concept: concept "of " "the "? concept ["and " concept]   -> concept_of
        | concept "that " verb concept                     -> concept_that
-       | concept "that is " concept                       -> concept_that_is
+       | concept "that is " [negation] concept            -> concept_that_is
        | concept concept                                  -> concept_with_property
        | _ARTICLE? [quantification] concept_name [INT] " "?
 
 negation: "not " | "does not " | "do not "
-_ARTICLE: "a " | "an " | "the "
+_ARTICLE: "a "i | "an "i | "the "i
 concept_name: "conceptid" CNAME "#"

@@ -17,7 +17,6 @@ It is obligatory that each driver of a rental is qualified.
 // Pick-up / Return Rules
 It is obligatory that the country of the return branch of each international inward rental is the country of registration of the rented car of the rental.
 It is obligatory that at the actual return date/time of each in-country rental and each international inward rental the local area of the return branch of the rental owns the rented car of the rental.
-It is obligatory that the country of the return branch of each international inward rental is the country of registration of the rented car of the rental.
 It is necessary that if a rental is open and the rental is not an international inward rental then the rented car of the rental is owned by the local area of the pick-up branch of the rental.
 If the actual return date/time of a rental is after the end date/time of the grace period of the rental then it is obligatory that the rental incurs a late return charge.
 If the drop-off location of a rental is not the EU-Rent site that is base for the return branch of the rental then it is obligatory that the rental incurs a location penalty charge.

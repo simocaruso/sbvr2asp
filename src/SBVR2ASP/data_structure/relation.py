@@ -16,6 +16,7 @@ class Relation(Node):
     def reshape(self, tree: list[Node], queue: list[Node]):
         res = self._reshaped_node()
         res.negated = self.negated
+        res.weak = self.weak
         tree.append(res)
         tree = self.left.reshape(tree, queue)
         tree = self.right.reshape(tree, queue)

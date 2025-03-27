@@ -34,7 +34,7 @@ def process_vocabulary(vocabulary: str, register: Register):
 
 
 def add_properties_to_grammar(lark: LarkWrapper, register: Register):
-    added = {'is'}  # "is" should not be included and is handled in the grammar
+    added = {'is', 'be'}  # "is" should not be included and is handled in the grammar
     res = ''
     for property in register.get_properties().values():
         if property not in added:
@@ -63,6 +63,8 @@ def process_rules(rules: str, register: Register) -> list[Node]:
         visited_nodes = set()
         for node in tree:
             node.evaluate(curr.body, register, visited_nodes, False)
+            if node.weak:
+                curr.weight = 1
         res.append(curr)
     return res
 

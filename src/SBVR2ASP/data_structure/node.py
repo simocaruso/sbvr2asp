@@ -13,6 +13,7 @@ class Node:
         self.left: Node = left
         self.right: Node = right
         self.negated = False
+        self.weak = False
         self.substitute = {}
         self.id = Node.node_id
         Node.node_id += 1

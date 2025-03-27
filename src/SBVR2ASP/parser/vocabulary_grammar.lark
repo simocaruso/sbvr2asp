@@ -31,6 +31,8 @@ value: name _NEWLINE "Concept type: individual concept"
           | name " is responsible for " name
           | name " is provisionally charged to " name
           | name " is calculated in " name
+          | name " be rented to " name
+          | name " is rented to " name
           | name " incurs " name
           | name " is " name
           | name " honors " name
