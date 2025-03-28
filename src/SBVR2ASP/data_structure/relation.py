@@ -79,6 +79,11 @@ class MathRelation(Relation):
             # Remove double negation
             self.negated = False
             self.right.negated = False
+        if self.left == self.right and self.right.negated:
+            # This is the case in which we have two instances of the same entity
+            # e.g., rental1 is not rental2
+            self.right.negated = False
+            self.negated = True
         return MathRelation(self.left.get_left_most(),
                             self.right.get_left_most(),
                             self.operator)

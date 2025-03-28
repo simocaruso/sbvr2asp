@@ -279,7 +279,7 @@ class TestCarRentalRules(unittest.TestCase):
         self.assertEqual(self._process(rules), dedent('''\
                                     :- start_date(STADAT), STADAT <= now, reserved_rental(RESREN), has(reserved_rental(RESREN),start_date(STADAT)).
                                     :- rental_duration(RENDUR), RENDUR >= 90, rental(REN), has(rental(REN),rental_duration(RENDUR)).
-                                    :- rental(REN_1), not rental(REN_2), REN_1 = REN_2, renter(REN), renter(REN), REN = REN, rental(REN_1), has(rental(REN_1),renter(REN)), rental(REN_2), has(rental(REN_2),renter(REN)), rental_period(RENPER), rental_period(RENPER), overlap(rental_period(RENPER),rental_period(RENPER)), rental(REN_1), includes(rental(REN_1),rental_period(RENPER)), rental(REN_2), includes(rental(REN_2),rental_period(RENPER)).
+                                    :- rental(REN_1), rental(REN_2), REN_1 != REN_2, renter(REN), renter(REN), REN = REN, rental(REN_1), has(rental(REN_1),renter(REN)), rental(REN_2), has(rental(REN_2),renter(REN)), rental_period(RENPER), rental_period(RENPER), overlap(rental_period(RENPER),rental_period(RENPER)), rental(REN_1), includes(rental(REN_1),rental_period(RENPER)), rental(REN_2), includes(rental(REN_2),rental_period(RENPER)).
                                     ''').strip())
 
     def test_servicing_rules(self):
