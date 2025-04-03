@@ -244,7 +244,7 @@ class TestCarRentalRules(unittest.TestCase):
         It is obligatory that each driver of a rental is qualified.''')
         self.assertEqual(self._process(rules), dedent('''\
                                 :- rental(REN), open(OPE), REN = OPE, driver(DRI), driver(DRI), DRI = DRI, rental(REN), has(rental(REN),driver(DRI)), barred(BAR), is(driver(DRI),barred(BAR)).
-                                :- driver(DRI), qualified(QUA), DRI != QUA, rental(REN), has(rental(REN),driver(DRI)).
+                                :- driver(DRI), not qualified(QUA), DRI = QUA, rental(REN), has(rental(REN),driver(DRI)).
                                 ''').strip())
 
     def test_return_rules(self):
@@ -303,7 +303,7 @@ class TestCarRentalRules(unittest.TestCase):
                     It is necessary that the booking date/time of a points rental is at least 5 days before the scheduled start date/time of the rental.
                     ''')
         self.assertEqual(self._process(rules), dedent('''\
-                            :- renter(REN), club_member(CLUMEM), REN != CLUMEM, points_rental(POIREN), has(points_rental(POIREN),renter(REN)).
+                            :- renter(REN), not club_member(CLUMEM), REN = CLUMEM, points_rental(POIREN), has(points_rental(POIREN),renter(REN)).
                             :- booking_date_time(BOODATTIM), scheduled_start_date_time(SCHSTADATTIM), BOODATTIM+5 >= SCHSTADATTIM, points_rental(POIREN), has(points_rental(POIREN),booking_date_time(BOODATTIM)), points_rental(POIREN), has(points_rental(POIREN),scheduled_start_date_time(SCHSTADATTIM)).
                             ''').strip())
 

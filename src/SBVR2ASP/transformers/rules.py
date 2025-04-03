@@ -11,7 +11,7 @@ from SBVR2ASP.data_structure.concept import Concept
 from SBVR2ASP.data_structure.constant import Constant
 from SBVR2ASP.data_structure.node import Node
 from SBVR2ASP.data_structure.relation import Relation, MathRelation, SwappedLeftMostToRightMostRelation, \
-    Disjunction, Conjunction, Implication
+    Disjunction, Conjunction, Implication, MatchRelation
 from SBVR2ASP.data_structure.value import Value
 from SBVR2ASP.register import Register
 
@@ -135,7 +135,7 @@ class RulesTransformer(Transformer):
     def match_proposition(self, first, negation, second):
         if negation:
             second.negated = not second.negated
-        return MathRelation(first, second, MathOperator.EQUAL)
+        return MatchRelation(first, second)
 
     def implication_proposition(self, first, second):
         return Implication(first, second)

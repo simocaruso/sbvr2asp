@@ -215,7 +215,7 @@ def generate_rental_period(pool: Pool, current):
     res.extend([
         Relation('has', reserved_rental, start_date),
     ])
-    rental_duration = pool.get('rental_duration', random.randint(0, 90))
+    rental_duration = pool.get('rental_duration', random.randint(0, 89))
     rental = current.get('rental')
     res.extend([rental_duration, rental])
     res.extend([
@@ -289,21 +289,25 @@ def generate_transfer(pool: Pool, current):
 
 def generate(pool) -> list:
     res = []
-    current = Current(pool)
     # TODO rental period that do not overlap for same renter
     res.extend(generate_branch(pool))
-    res.extend(generate_rental_rules(pool, current))
-    res.extend(generate_payment_rules(pool, current))
-    res.extend(generate_diver_rules(pool, current))
-    res.extend(generate_return_rules(pool, current))
-    res.extend(generate_rental_period(pool, current))
-    res.extend(generate_servicing(pool, current))
-    res.extend(generate_transfer(pool, current))
+    for _ in range(N_RENTAL):
+        current = Current(pool)
+        res.extend(generate_rental_rules(pool, current))
+        res.extend(generate_payment_rules(pool, current))
+        res.extend(generate_diver_rules(pool, current))
+        res.extend(generate_return_rules(pool, current))
+        res.extend(generate_rental_period(pool, current))
+        res.extend(generate_servicing(pool, current))
+        res.extend(generate_transfer(pool, current))
     return res
 
 
 # CONFIG
 N_BRANCH = 2
+N_RENTAL = 100
+N_COUNTRY = 2
+N_RENTER = 10
 
 if __name__ == '__main__':
     pool = Pool()

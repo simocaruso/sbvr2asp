@@ -1,6 +1,9 @@
 import copy
 
+from SBVR2ASP.asp.aggregate import AggregateOperator, Aggregate
 from SBVR2ASP.asp.math import MathOperator, Math
+from SBVR2ASP.asp.term import ASP_NULL
+from SBVR2ASP.data_structure.concept import Concept
 from SBVR2ASP.data_structure.node import Node
 from SBVR2ASP.register import Register
 
@@ -69,21 +72,37 @@ class SwappedLeftMostToRightMostRelation(Relation):
         return res
 
 
+class MatchRelation(Relation):
+    def __init__(self, left, right):
+        super().__init__(left, right)
+
+    def _reshaped_node(self):
+        if isinstance(self.right, Concept):
+            if self.negated:
+                self.right.negated = True
+                return MathRelation(self.left.get_left_most(),
+                                    self.right.get_left_most(),
+                                    MathOperator.NOT_EQUAL)
+        if self.negated and self.right.negated:
+            # Remove double negation
+            self.negated = False
+            self.right.negated = False
+        elif self.left == self.right and self.right.negated:
+            # This is the case in which we have two instances of the same entity
+            # e.g., rental1 is not rental2
+            self.right.negated = False
+            self.negated = True
+        return MathRelation(self.left.get_left_most(),
+                            self.right.get_left_most(),
+                            MathOperator.EQUAL)
+
+
 class MathRelation(Relation):
     def __init__(self, left, right, operator: MathOperator):
         super().__init__(left, right)
         self.operator = operator
 
     def _reshaped_node(self):
-        if self.negated and self.right.negated:
-            # Remove double negation
-            self.negated = False
-            self.right.negated = False
-        if self.left == self.right and self.right.negated:
-            # This is the case in which we have two instances of the same entity
-            # e.g., rental1 is not rental2
-            self.right.negated = False
-            self.negated = True
         return MathRelation(self.left.get_left_most(),
                             self.right.get_left_most(),
                             self.operator)
