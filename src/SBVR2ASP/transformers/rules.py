@@ -133,9 +133,10 @@ class RulesTransformer(Transformer):
         return MathRelation(first, second, MathOperator.LESS_THAN)
 
     def match_proposition(self, first, negation, second):
+        res = MatchRelation(first, second)
         if negation:
-            second.negated = not second.negated
-        return MatchRelation(first, second)
+            res.negated = not res.negated
+        return res
 
     def implication_proposition(self, first, second):
         return Implication(first, second)

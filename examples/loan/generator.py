@@ -1,3 +1,4 @@
+import argparse
 import random
 from collections import defaultdict
 
@@ -63,6 +64,9 @@ def generate(pool) -> list:
         res.append(loan)
         res.append(bail)
         res.append(Relation('is_got_by', loan, debtor))
+        if UNFEASIBLE:
+            new_debt = pool.generate('debtor')
+            res.append(Relation('is_got_by', loan, new_debt))
         bank_account = set()  # track the bank in which we create an account
         # create accounts
         for i in range(random.choice(N_ACCOUNT)):
@@ -73,17 +77,37 @@ def generate(pool) -> list:
             bank = pool.get('bank', random.randint(1, N_BANKS))
             bank_account.add(bank)
             res.append(Relation('is_contained_in', account, bank))
+        if UNFEASIBLE:
+            for i in range(6):
+                account = pool.generate('account')
+                res.append(account)
+                res.append(Relation('own', person, account))
+                # select a random bank
+                bank = pool.get('bank', random.randint(1, N_BANKS))
+                bank_account.add(bank)
+                res.append(Relation('is_contained_in', account, bank))
         res.append(Relation('is_given_by', loan, random.choice(list(bank_account))))
         res.append(Relation('own', loan, bail))
         res.append(Relation('is_owned_by', real_estate, owner))
+        if UNFEASIBLE:
+            res.append(Relation('is_owned_by', real_estate, pool.generate('owner')))
     return res
 
 
 # CONFIG
-N_ACCOUNT = range(1, 6)  # range of number of accounts for each person
-N_BANKS = 2  # total number of banks
-N_PERSONS = 6  # total number of persons
+N_ACCOUNT = range(1, 6)
+N_BANKS = -1  # total number of banks
+N_PERSONS = -1  # total number of persons
+UNFEASIBLE = False
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-b', '--banks', default=10)
+    parser.add_argument('-p', '--persons', default=100)
+    args = parser.parse_args()
+
+    N_BANKS = int(args.banks)
+    N_PERSONS = int(args.persons)
+
     pool = Pool()
     print(' '.join(map(str, generate(pool))))

@@ -33,6 +33,8 @@ class Concept(Node):
                     atom.negate()
                 context.append(atom)
             self.evaluate_res = atom, new_context
+        elif self.evaluate_res[1] != context:
+            return self.evaluate_res[0], context
         return self.evaluate_res
 
     def __eq__(self, other):

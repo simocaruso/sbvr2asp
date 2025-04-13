@@ -1,3 +1,4 @@
+import argparse
 import random
 from collections import defaultdict
 
@@ -29,6 +30,7 @@ class Relation:
 class Pool:
     def __init__(self):
         self.pool = defaultdict(list)
+        self.branch_country = {}
 
     def generate(self, predicate):
         res = Atom(predicate)
@@ -40,6 +42,12 @@ class Pool:
             while Atom.id[predicate] < id:
                 self.generate(predicate)
         return Atom(predicate, id)
+
+    def get_branch_country(self, branch_id):
+        if branch_id not in self.branch_country:
+            country = random.randint(0, N_COUNTRY-1)
+            self.branch_country[branch_id] = country
+        return self.branch_country[branch_id]
 
 
 class Current:
@@ -73,6 +81,7 @@ def generate_rental_rules(pool: Pool, current):
     res.extend([rental, rental_period, return_branch, requested_car_group,
                 scheduled_pick_up, advance_rental, booking_date, rental_booking])
     res.extend([
+        Relation('is_responsible_for', current.get('renter'), rental),
         Relation('has', rental, requested_car_group),
         Relation('includes', rental, rental_period),
         Relation('has', rental, return_branch),
@@ -80,6 +89,13 @@ def generate_rental_rules(pool: Pool, current):
         Relation('has', advance_rental, booking_date),
         Relation('establishes', rental_booking, advance_rental)
     ])
+    if UNFEAS:
+        requested_car_group = pool.generate('requested_car_group')
+        res.append(Relation('has', rental, requested_car_group))
+        rental_period = pool.generate('rental_period')
+        res.append(Relation('includes', rental, rental_period))
+        return_branch = pool.get('return_branch', random.randint(0, N_BRANCH))
+        res.append(Relation('has', rental, return_branch))
     return res
 
 
@@ -127,10 +143,14 @@ def generate_diver_rules(pool: Pool, current):
     rental = current.get('rental')
     driver = current.get('driver')
     qualified = pool.get('qualified', driver.value)
-    res.extend([rental, driver, qualified])
+    res.extend([rental, driver])
+    if not UNFEAS:
+        res.append(qualified)
     res.extend([
         Relation('has', rental, driver),
     ])
+    if UNFEAS:
+        res.append(pool.get('barred', driver.value))
     return res
 
 
@@ -147,7 +167,7 @@ def generate_return_rules(pool: Pool, current):
         Relation('has', return_branch, country),
         Relation('has', international_inward_rental, return_branch),
         Relation('has', international_inward_rental, rented_car),
-        Relation('has', rented_car, country_of_registration),
+        Relation('has', rented_car, country_of_registration)
     ])
     in_country_rental = current.get('in_country_rental')
     actual_return_date_time = current.get('actual_return_date_time')
@@ -192,9 +212,9 @@ def generate_return_rules(pool: Pool, current):
     assigned = pool.get('assigned', rental.value)
     res.extend([assigned])
     res.extend([
-        Relation('is_stored_at', rental, pick_up_branch),
+        Relation('is_stored_at', rented_car, pick_up_branch),
         Relation('has', rental, rented_car),
-        Relation('incurs', rental, pick_up_branch),
+        Relation('has', rental, pick_up_branch),
     ])
     actual_start_date_time = current.get('actual_start_date_time')
     fuel_level = pool.get('fuel_level', 'full')
@@ -215,7 +235,12 @@ def generate_rental_period(pool: Pool, current):
     res.extend([
         Relation('has', reserved_rental, start_date),
     ])
-    rental_duration = pool.get('rental_duration', random.randint(0, 89))
+    min_rental_dur = 0
+    max_rental_dur = 89
+    if UNFEAS:
+        min_rental_dur = 90
+        max_rental_dur = 200
+    rental_duration = pool.get('rental_duration', random.randint(min_rental_dur, max_rental_dur))
     rental = current.get('rental')
     res.extend([rental_duration, rental])
     res.extend([
@@ -229,12 +254,19 @@ def generate_servicing(pool: Pool, current):
     rental_car = current.get('rental_car')
     in_need_of_service = current.get('in_need_of_service')
     scheduled_service = current.get('scheduled_service')
-    res.extend([in_need_of_service, scheduled_service, rental_car])
+    res.extend([in_need_of_service, rental_car])
+    if not UNFEAS:
+        res.append(scheduled_service)
     res.extend([
         Relation('has', rental_car, scheduled_service),
         Relation('is', rental_car, in_need_of_service),
     ])
-    service_reading = pool.get('service_reading', random.randint(0, 5500))
+    min_service_reading = 0
+    max_service_reading = 5499
+    if UNFEAS:
+        min_service_reading = 5500
+        max_service_reading = 6000
+    service_reading = pool.get('service_reading', random.randint(min_service_reading, max_service_reading))
     res.extend([service_reading])
     res.extend([
         Relation('has', rental_car, service_reading),
@@ -259,12 +291,13 @@ def generate_transfer(pool: Pool, current):
     transferred_car = current.get('transferred_car')
     transfer_drop_off_branch = pool.get('transfer_drop_off_branch', random.randint(0, N_BRANCH))
     local_area = current.get('local_area')
-    res.extend([transfer_drop_off_date_time, transferred_car, local_area, car_transfer])
+    res.extend([transfer_drop_off_date_time, transfer_drop_off_branch, transferred_car, local_area, car_transfer])
     res.extend([
         Relation('has', car_transfer, transfer_drop_off_date_time),
         Relation('is_owned_by', transferred_car, local_area),
         Relation('has', car_transfer, transferred_car),
         Relation('has', car_transfer, transfer_drop_off_date_time),
+        Relation('has', car_transfer, transfer_drop_off_branch),
         Relation('includes', local_area, transfer_drop_off_branch),
     ])
     country = current.get('country')
@@ -272,7 +305,7 @@ def generate_transfer(pool: Pool, current):
     international_return = current.get('international_return')
     res.extend([country, country_of_registration, international_return])
     res.extend([
-        Relation('has', transfer_drop_off_branch, country),
+        Relation('has', transfer_drop_off_branch, pool.get_branch_country(transfer_drop_off_branch)),
         Relation('has', international_return, transfer_drop_off_branch),
         Relation('has', international_return, transferred_car),
         Relation('has', transferred_car, country_of_registration),
@@ -289,7 +322,6 @@ def generate_transfer(pool: Pool, current):
 
 def generate(pool) -> list:
     res = []
-    # TODO rental period that do not overlap for same renter
     res.extend(generate_branch(pool))
     for _ in range(N_RENTAL):
         current = Current(pool)
@@ -304,11 +336,23 @@ def generate(pool) -> list:
 
 
 # CONFIG
-N_BRANCH = 2
-N_RENTAL = 100
-N_COUNTRY = 2
-N_RENTER = 10
+N_BRANCH = -1
+N_RENTAL = -1
+N_COUNTRY = -1
+N_RENTER = -1
+UNFEAS = False
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-b', '--branch', default=4)
+    parser.add_argument('-r', '--rental', default=100)
+    parser.add_argument('-c', '--country', default=4)
+    parser.add_argument('-p', '--renter', default=100)
+    args = parser.parse_args()
+    N_BRANCH = int(args.branch)
+    N_RENTAL = int(args.rental)
+    N_COUNTRY = int(args.country)
+    N_RENTER = int(args.renter)
     pool = Pool()
     print(' '.join(map(str, generate(pool))))
+    print('#const now = -1.')

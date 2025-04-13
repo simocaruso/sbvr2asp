@@ -13,22 +13,30 @@ class Relation(Node):
         super().__init__(left, right)
 
     def _reshaped_node(self):
-        return Relation(self.left.get_left_most(),
-                        self.right.get_left_most())
+        res = Relation(self.left.get_left_most(),
+                       self.right.get_left_most())
+        if self.negated:
+            res = Relation(self.left.get_left_most(),
+                           self.right)
+            self.right = None
+        return res
 
-    def reshape(self, tree: list[Node], queue: list[Node]):
+    def reshape(self, tree: list[Node], queue: list[Node]) -> list[Node]:
         res = self._reshaped_node()
         res.negated = self.negated
         res.weak = self.weak
         tree.append(res)
         tree = self.left.reshape(tree, queue)
-        tree = self.right.reshape(tree, queue)
+        if self.right:
+            tree = self.right.reshape(tree, queue)
         return tree
 
     def _evaluate_left(self, context, register, visited):
         return self.left.evaluate(context, register, visited)
 
     def _evaluate_right(self, context, register, visited):
+        if self.negated:
+            return self.right.get_left_most().evaluate(context, register, visited, self.negated)
         return self.right.evaluate(context, register, visited, self.negated)
 
     def evaluate(self, context: list, register: Register, visited: set, negated=False):
@@ -36,19 +44,28 @@ class Relation(Node):
             visited.add(self.id)
         left, relation_context = self._evaluate_left(context, register, visited)
         right, relation_context = self._evaluate_right(context, register, visited)
-        relation_atom = register.get_relation(self.left.concept_id, self.right.concept_id)
+        relation_atom = register.get_relation(self.left.concept_id, self.right.get_left_most().concept_id)
         if not relation_atom:
-            relation_atom = register.get_relation(self.right.concept_id, self.left.concept_id)
+            relation_atom = register.get_relation(self.right.get_left_most().concept_id, self.left.concept_id)
         if not relation_atom:
             raise RuntimeError(
                 f'No relation between {register.get_concept_name(self.left.concept_id)} and'
-                f' {register.get_concept_name(self.right.concept_id)}')
+                f' {register.get_concept_name(self.right.get_left_most().concept_id)}')
+        register.link_atoms(relation_atom, left)
+        register.link_atoms(relation_atom, right)
         if relation_context == context:
             # Context changes only in case left or right are aggregates,
             # and in case they (or at least one) are aggregates the negation is already handled
-            relation_atom.negated = self.negated
-        register.link_atoms(relation_atom, left)
-        register.link_atoms(relation_atom, right)
+            if self.negated:
+                tree: list[Node] = self.right.reshape([], [])
+                agg_context = [left, right]
+                relation_context.remove(right)
+                if len(relation_context) > 1:
+                    relation_context.remove(left)
+                for node in tree:
+                    node.evaluate(agg_context, register, visited)
+                relation_atom = Aggregate(AggregateOperator.COUNT, [right], [relation_atom] + agg_context,
+                                          guard=(None, Math(MathOperator.LESS_THAN, 1)))
         if relation_atom:
             relation_context.append(relation_atom)
         return relation_atom, relation_context
@@ -77,7 +94,7 @@ class MatchRelation(Relation):
         super().__init__(left, right)
 
     def _reshaped_node(self):
-        if isinstance(self.right, Concept):
+        if self.left != self.right and isinstance(self.right, Concept):
             if self.negated:
                 self.right.negated = True
                 return MathRelation(self.left.get_left_most(),

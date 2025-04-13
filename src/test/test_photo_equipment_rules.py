@@ -53,6 +53,9 @@ Gytis Gudas''')
 
 
 class TestPhotoEquipmentRules(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+
     def _process(self, rules):
         register = Register()
         process_vocabulary(VOCABULARY, register)
@@ -118,4 +121,4 @@ class TestPhotoEquipmentRules(unittest.TestCase):
                             :- digital_photo_camera(DIGPHOCAM), #count{shooting_mode(SHOMOD): has(digital_photo_camera(DIGPHOCAM),shooting_mode(SHOMOD))} < 2.
                             :- photo_camera(PHOCAM), #count{memory_card_slot(MEMCARSLO): contains(photo_camera(PHOCAM),memory_card_slot(MEMCARSLO))} > 2.
                             :- photo_camera(PHOCAM), not 2 <= #count{white_balance_preset(WHIBALPRE): has(photo_camera(PHOCAM),white_balance_preset(WHIBALPRE))} <= 9.
-                            :- digital_photo_camera(DIGPHOCAM), photo_element(PHOELE), not contains(digital_photo_camera(DIGPHOCAM),photo_element(PHOELE)), digital_sensor(DIGSEN), PHOELE = DIGSEN.''').strip())
+                            :- digital_photo_camera(DIGPHOCAM), #count{photo_element(PHOELE): contains(digital_photo_camera(DIGPHOCAM),photo_element(PHOELE)), digital_photo_camera(DIGPHOCAM), photo_element(PHOELE), digital_sensor(DIGSEN), PHOELE = DIGSEN} < 1.''').strip())
