@@ -111,7 +111,7 @@ class TestPhotoEquipmentRules(unittest.TestCase):
                             :- digital_photo_camera(DIGPHOCAM), film_photo_camera(FILPHOCAM), DIGPHOCAM = FILPHOCAM.
                             :- award(AWA), #count{photo_exhibition(PHOEXH): received_in(award(AWA),photo_exhibition(PHOEXH))} > 1.
                             :- award(AWA), #count{photo(PHO): received_for(award(AWA),photo(PHO))} < 1.
-                            :- award(AWA), #count{photographer(PHO): received_by(award(AWA),photographer(PHO))} > 1.
+                            :- award(AWA), #count{photographer(PHOT): received_by(award(AWA),photographer(PHOT))} > 1.
                             :- jim(JIM), john(JOH), JIM = JOH.
                             :- g__gudas(GGUD), not gytis_gudas(GYTGUD), GGUD = GYTGUD.
                             :- person(PER), organization(ORG), PER = ORG.

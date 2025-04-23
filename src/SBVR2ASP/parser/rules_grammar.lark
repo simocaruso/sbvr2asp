@@ -57,10 +57,10 @@ proposition_expression: modal_operator proposition_expression                   
 
 !temporal_value: "in the future" | "in the past"
 
-concept: concept "of " "the "? concept ["and " concept]   -> concept_of
-       | concept "that " verb concept                     -> concept_that
-       | concept "that is " [negation] concept            -> concept_that_is
-       | concept concept                                  -> concept_with_property
+concept: concept "of " "the "? concept ["and " concept]      -> concept_of
+       | concept ("that " | "who ") verb concept             -> concept_that
+       | concept ("that is " | "who is ") [negation] concept -> concept_that_is
+       | concept concept                                     -> concept_with_property
        | _ARTICLE? [quantification] concept_name [INT] " "?
 
 negation: "not " | "does not " | "do not "

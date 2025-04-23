@@ -73,6 +73,7 @@ def main():
     arg_parser = ArgumentParser()
     arg_parser.add_argument("vocabulary", help="Vocabulary file")
     arg_parser.add_argument("rules", help="Rules file")
+    arg_parser.add_argument("--ngo", action='store_true')
     args = arg_parser.parse_args()
 
     register = Register()
@@ -83,4 +84,13 @@ def main():
     with open(args.rules, 'r') as rules:
         res = process_rules(rules.read(), register)
 
-    print("\n".join(map(str, res)))
+    encoding = "\n".join(map(str, res))
+
+    if args.ngo:
+        from clingo.ast import parse_string
+        from ngo import optimize, auto_detect_input, auto_detect_output
+        prg = []
+        parse_string(encoding, prg.append)
+        encoding = '\n'.join(map(str, optimize(prg, auto_detect_input(prg), auto_detect_output(prg))))
+
+    print(encoding)

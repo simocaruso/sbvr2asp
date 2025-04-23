@@ -83,6 +83,12 @@ class SwappedLeftMostToRightMostRelation(Relation):
         super().__init__(left, right)
 
     def _reshaped_node(self):
+        right = self.right.get_left_most()
+        left = self.left.get_right_most()
+        if right.label and not left.label:
+            left.label = right.label
+        elif left.label and not right.label:
+            right.label = left.label
         res = Relation(self.right.get_left_most(),
                        self.left.get_right_most())
         res.negated = self.negated

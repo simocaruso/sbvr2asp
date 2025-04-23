@@ -8,6 +8,8 @@ from SBVR2ASP.asp.term import Term, ASP_NULL
 
 
 class Atom(Literal, IOperand):
+    logic_vars = {}
+
     def __init__(self, predicate: str, terms: dict[str, Term | Atom] = None, negated: bool = False, label: str = False):
         super().__init__()
         self.predicate = predicate
@@ -19,7 +21,12 @@ class Atom(Literal, IOperand):
 
     def init(self):
         if self.terms['id'] == ASP_NULL:
-            res = ''.join([x[0:3] for x in self.predicate.split('_')]).upper()
+            last = 3
+            res = ''.join([x[0:last] for x in self.predicate.split('_')]).upper()
+            while res in Atom.logic_vars and Atom.logic_vars[res] != self.predicate:
+                last += 1
+                res = ''.join([x[0:last] for x in self.predicate.split('_')]).upper()
+            Atom.logic_vars[res] = self.predicate
             if self.label:
                 res += '_' + self.label
             self.terms['id'] = Term(res)

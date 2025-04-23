@@ -232,9 +232,9 @@ class TestCarRentalRules(unittest.TestCase):
                     If the renter of a rental requests a price conversion then it is obligatory that the rental charge of the rental is converted to the currency of the price conversion.
                     It is necessary that each cash rental honors the lowest rental price of the cash rental.''')
         self.assertEqual(self._process(rules), dedent('''\
-                                :- rental(REN), open(OPE), REN = OPE, #count{credit_card(CRECAR): is_provisionally_charged_to(estimated_rental_charge(ESTRENCHA),credit_card(CRECAR)), estimated_rental_charge(ESTRENCHA), credit_card(CRECAR), renter(REN), has(renter(REN),credit_card(CRECAR)), rental(REN), is_responsible_for(renter(REN),rental(REN))} < 1.
+                                :- rental(REN), open(OPE), REN = OPE, #count{credit_card(CRECAR): is_provisionally_charged_to(estimated_rental_charge(ESTRENCHA),credit_card(CRECAR)), estimated_rental_charge(ESTRENCHA), credit_card(CRECAR), renter(RENT), has(renter(RENT),credit_card(CRECAR)), rental(REN), is_responsible_for(renter(RENT),rental(REN))} < 1.
                                 :- rental_charge(RENCHA), #count{business_currency(BUSCUR): is_calculated_in(rental_charge(RENCHA),business_currency(BUSCUR)), rental_charge(RENCHA), business_currency(BUSCUR), rental(REN), has(rental(REN),business_currency(BUSCUR))} < 1, rental(REN), has(rental(REN),rental_charge(RENCHA)).
-                                :- renter(REN), price_conversion(PRICON), requests(renter(REN),price_conversion(PRICON)), rental(REN), has(rental(REN),renter(REN)), #count{currency(CUR): is_converted_to(rental_charge(RENCHA),currency(CUR)), rental_charge(RENCHA), currency(CUR), price_conversion(PRICON), has(price_conversion(PRICON),currency(CUR))} < 1, rental(REN), has(rental(REN),rental_charge(RENCHA)).
+                                :- renter(RENT), price_conversion(PRICON), requests(renter(RENT),price_conversion(PRICON)), rental(REN), has(rental(REN),renter(RENT)), #count{currency(CUR): is_converted_to(rental_charge(RENCHA),currency(CUR)), rental_charge(RENCHA), currency(CUR), price_conversion(PRICON), has(price_conversion(PRICON),currency(CUR))} < 1, rental(REN), has(rental(REN),rental_charge(RENCHA)).
                                 :- cash_rental(CASREN), #count{lowest_rental_price(LOWRENPRI): honors(cash_rental(CASREN),lowest_rental_price(LOWRENPRI)), cash_rental(CASREN), lowest_rental_price(LOWRENPRI), cash_rental(CASREN), honors(cash_rental(CASREN),lowest_rental_price(LOWRENPRI))} < 1.''').strip())
 
     def test_driver_rules(self):
@@ -279,7 +279,7 @@ class TestCarRentalRules(unittest.TestCase):
         self.assertEqual(self._process(rules), dedent('''\
                                     :- start_date(STADAT), STADAT <= now, reserved_rental(RESREN), has(reserved_rental(RESREN),start_date(STADAT)).
                                     :- rental_duration(RENDUR), RENDUR >= 90, rental(REN), has(rental(REN),rental_duration(RENDUR)).
-                                    :- rental(REN_1), rental(REN_2), REN_1 != REN_2, renter(REN), renter(REN), REN = REN, rental(REN_1), has(rental(REN_1),renter(REN)), rental(REN_2), has(rental(REN_2),renter(REN)), rental_period(RENPER), rental_period(RENPER), overlap(rental_period(RENPER),rental_period(RENPER)), rental(REN_1), includes(rental(REN_1),rental_period(RENPER)), rental(REN_2), includes(rental(REN_2),rental_period(RENPER)).
+                                    :- rental(REN_1), rental(REN_2), REN_1 != REN_2, renter(RENT_1), renter(RENT_2), RENT_1 = RENT_2, rental(REN_1), has(rental(REN_1),renter(RENT_1)), rental(REN_2), has(rental(REN_2),renter(RENT_2)), rental_period(RENPER_1), rental_period(RENPER_2), overlap(rental_period(RENPER_1),rental_period(RENPER_2)), rental(REN_1), includes(rental(REN_1),rental_period(RENPER_1)), rental(REN_2), includes(rental(REN_2),rental_period(RENPER_2)).
                                     ''').strip())
 
     def test_servicing_rules(self):
@@ -290,8 +290,8 @@ class TestCarRentalRules(unittest.TestCase):
                 If the rented car of an open rental is in need of service or is in need of repair then it is obligatory that the rental incurs a car exchange during rental.
                 ''')
         self.assertEqual(self._process(rules), dedent('''\
-                            :- rental_car(RENCAR), #count{scheduled_service(SCHSER): has(rental_car(RENCAR),scheduled_service(SCHSER)), rental_car(RENCAR), scheduled_service(SCHSER)} < 1, in_need_of_service(INNEEOFSER), is(rental_car(RENCAR),in_need_of_service(INNEEOFSER)).
-                            :- service_reading(SERREA), SERREA >= 5500, rental_car(RENCAR), has(rental_car(RENCAR),service_reading(SERREA)).
+                            :- rental_car(RENTCAR), #count{scheduled_service(SCHSER): has(rental_car(RENTCAR),scheduled_service(SCHSER)), rental_car(RENTCAR), scheduled_service(SCHSER)} < 1, in_need_of_service(INNEEOFSER), is(rental_car(RENTCAR),in_need_of_service(INNEEOFSER)).
+                            :- service_reading(SERREA), SERREA >= 5500, rental_car(RENTCAR), has(rental_car(RENTCAR),service_reading(SERREA)).
                             :- rented_car(RENCAR), in_need_of_service(INNEEOFSER), RENCAR = INNEEOFSER, rental(REN), has(rental(REN),rented_car(RENCAR)), open(OPE), is(rental(REN),open(OPE)), #count{car_exchange_during_rental(CAREXCDURREN): incurs(rental(REN),car_exchange_during_rental(CAREXCDURREN)), rental(REN), car_exchange_during_rental(CAREXCDURREN)} < 1.
                             :- rented_car(RENCAR), in_need_of_repair(INNEEOFREP), RENCAR = INNEEOFREP, rental(REN), has(rental(REN),rented_car(RENCAR)), open(OPE), is(rental(REN),open(OPE)), #count{car_exchange_during_rental(CAREXCDURREN): incurs(rental(REN),car_exchange_during_rental(CAREXCDURREN)), rental(REN), car_exchange_during_rental(CAREXCDURREN)} < 1.
                             ''').strip())
@@ -303,7 +303,7 @@ class TestCarRentalRules(unittest.TestCase):
                     It is necessary that the booking date/time of a points rental is at least 5 days before the scheduled start date/time of the rental.
                     ''')
         self.assertEqual(self._process(rules), dedent('''\
-                            :- renter(REN), not club_member(CLUMEM), REN = CLUMEM, points_rental(POIREN), has(points_rental(POIREN),renter(REN)).
+                            :- renter(RENT), not club_member(CLUMEM), RENT = CLUMEM, points_rental(POIREN), has(points_rental(POIREN),renter(RENT)).
                             :- booking_date_time(BOODATTIM), scheduled_start_date_time(SCHSTADATTIM), BOODATTIM+5 >= SCHSTADATTIM, points_rental(POIREN), has(points_rental(POIREN),booking_date_time(BOODATTIM)), points_rental(POIREN), has(points_rental(POIREN),scheduled_start_date_time(SCHSTADATTIM)).
                             ''').strip())
 
