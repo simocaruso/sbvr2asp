@@ -46,7 +46,7 @@ A working example is:
 ```shell
 clingo examples/loan/encoding.lp examples/loan/data/sat/instance_5_100.lp
 ```
-Note that for the eu_rent dataset, due to GitHub's file size limitations, some `eu_rent` input files are split into multiple parts. 
+Note that for the eu_rent dataset, due to GitHub's file size limitations, some `eu_rent` input files are split into multiple parts and stored into a folder. 
 You need to pass all parts to Clingo:
 ```shell
   clingo examples/eu_rent/encoding.lp examples/eu_rent/data/sat/instance_500_400_5_5/*
